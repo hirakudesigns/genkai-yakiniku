@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>限界焼肉 -演出強化エディション-</title>
+<title>限界焼肉 -レイアウト最適化エディション-</title>
 <style>
 :root {
   --color-bg: #121212;
@@ -24,9 +24,10 @@ body {
   min-height: 100vh; overflow: hidden;
 }
 
+/* アプリ全体の天地（縦幅）を少し縮めてコンパクトに集約 */
 #app {
-  width: 100%; max-width: 480px; height: 100vh;
-  padding: 15px 12px; display: flex; flex-direction: column;
+  width: 100%; max-width: 440px; height: 92vh; margin-top: 2vh;
+  padding: 10px 12px; display: flex; flex-direction: column;
   position: relative; justify-content: space-between;
 }
 
@@ -38,34 +39,34 @@ body {
   height: 100%; text-align: center; padding: 20px;
 }
 .title-logo {
-  font-size: 48px; font-weight: 900; color: #ff3333; text-shadow: 3px 3px 0px #000, 0 0 20px rgba(232,160,32,0.6);
+  font-size: 44px; font-weight: 900; color: #ff3333; text-shadow: 3px 3px 0px #000, 0 0 20px rgba(232,160,32,0.6);
   margin-bottom: 8px; letter-spacing: 2px; animation: glow 1.5s ease-in-out infinite alternate;
 }
-.title-sub { font-size: 14px; color: var(--color-text-sub); margin-bottom: 60px; font-weight: bold; }
-.title-btns { display: flex; flex-direction: column; gap: 16px; width: 80%; max-width: 260px; }
+.title-sub { font-size: 13px; color: var(--color-text-sub); margin-bottom: 40px; font-weight: bold; }
+.title-btns { display: flex; flex-direction: column; gap: 14px; width: 80%; max-width: 250px; }
 .title-btn {
-  padding: 16px 0; border-radius: 12px; border: 2px solid #444; background: #222;
-  color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.1s;
+  padding: 14px 0; border-radius: 12px; border: 2px solid #444; background: #222;
+  color: #fff; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.1s;
 }
 .title-btn:active { transform: scale(0.95); }
-.title-btn.main-btn { background: var(--color-accent); color: #000; border: none; font-size: 18px; }
+.title-btn.main-btn { background: var(--color-accent); color: #000; border: none; font-size: 17px; }
 
 @keyframes glow { from { text-shadow: 0 0 10px rgba(255,50,50,0.5); } to { text-shadow: 0 0 25px rgba(232,160,32,0.9); } }
 
 /* ===================================================
-   ゲーム本編：設計図再現レイアウト
+   ゲーム本編：設計図再現レイアウト（縦を少しタイトに）
    =================================================== */
 .opp-header {
-  display: flex; align-items: flex-end; width: 100%; margin-bottom: 5px; position: relative; height: 140px;
+  display: flex; align-items: flex-end; width: 100%; margin-bottom: 2px; position: relative; height: 120px;
 }
-.opp-score-zone { width: 35%; display: flex; flex-direction: column; padding-left: 10px; padding-bottom: 15px; }
-.score-title-big { font-size: 24px; font-weight: bold; line-height: 1.2; }
-.score-num-big { font-size: 64px; font-weight: 900; line-height: 1; letter-spacing: -2px; }
-.score-unit-big { font-size: 24px; font-weight: bold; margin-left: 4px; }
+.opp-score-zone { width: 35%; display: flex; flex-direction: column; padding-left: 10px; padding-bottom: 10px; }
+.score-title-big { font-size: 20px; font-weight: bold; line-height: 1.2; color: var(--color-text-sub); }
+.score-num-big { font-size: 56px; font-weight: 900; line-height: 1; letter-spacing: -2px; color: #fff; }
+.score-unit-big { font-size: 20px; font-weight: bold; margin-left: 4px; }
 .ojisan-container { width: 65%; height: 100%; display: flex; justify-content: center; align-items: flex-end; overflow: hidden; }
 .ojisan-avatar-big {
-  width: 130px; height: 130px; border-radius: 50%; background: #2a3d2a;
-  display: flex; align-items: center; justify-content: center; font-size: 72px;
+  width: 110px; height: 110px; border-radius: 50%; background: #2a3d2a;
+  display: flex; align-items: center; justify-content: center; font-size: 60px;
   border: 4px solid #555; transition: all 0.3s;
 }
 .level-1 .ojisan-avatar-big { background: #3d3d1a; border-color: var(--color-accent); }
@@ -82,17 +83,17 @@ body {
 
 .opp-comment-bar {
   background: #ffffff; color: #000000; border: 3px solid #000000; border-radius: 30px;
-  padding: 6px 16px; font-size: 15px; font-weight: bold; text-align: center;
-  width: 100%; margin-bottom: 12px; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-  min-height: 39px; display: flex; align-items: center; justify-content: center;
+  padding: 4px 14px; font-size: 14px; font-weight: bold; text-align: center;
+  width: 100%; margin-bottom: 8px; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+  min-height: 34px; display: flex; align-items: center; justify-content: center;
 }
 
-/* 焼き網 */
-.grid-container { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+/* 焼き網（盤面の比率をスマートに維持） */
+.grid-container { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; margin-bottom: 5px; }
 .grid {
   display: grid; grid-template-rows: repeat(3, 1fr); grid-template-columns: repeat(5, 1fr);
-  gap: 6px; background: #1a1108; border-radius: 12px; padding: 10px;
-  border: 4px solid #3d2b14; aspect-ratio: 5 / 3.5; width: 100%;
+  gap: 5px; background: #1a1108; border-radius: 12px; padding: 8px;
+  border: 4px solid #3d2b14; aspect-ratio: 5 / 3.4; width: 100%;
 }
 .cell { border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; }
 .zone-opp  { background: #261212; border: 1px solid #4a1a1a; }
@@ -105,13 +106,12 @@ body {
 }
 @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.96); } }
 
-/* お肉の登場用アニメーション */
 .cell-inner {
   display: flex; flex-direction: column; align-items: center;
   animation: meatPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
 }
-.meat-icon { font-size: 32px; line-height: 1; }
-.meat-badge { font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 3px; margin-top: 2px; }
+.meat-icon { font-size: 28px; line-height: 1; }
+.meat-badge { font-size: 9px; font-weight: bold; padding: 1px 3px; border-radius: 3px; margin-top: 1px; }
 .badge-raw    { background: #1a4a1a; color: #a0ffa0; }
 .badge-cooked { background: #542b00; color: #ffb050; }
 
@@ -120,59 +120,61 @@ body {
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
-.self-footer { display: flex; flex-direction: column; width: 100%; padding-left: 10px; padding-top: 10px; }
-.mini-log { font-size: 12px; color: var(--color-text-sub); text-align: center; margin-bottom: 4px; min-height: 16px; }
+.self-footer { display: flex; flex-direction: column; width: 100%; padding-left: 10px; padding-top: 5px; }
+.mini-log { font-size: 12px; color: var(--color-text-sub); text-align: center; margin-bottom: 2px; min-height: 16px; }
 
 /* ===================================================
-   中央ポップアップ（モーダル）：後ろの盤面が見えるように透過
+   ★改善：画面下部にぴったり張り付くポップアップシステム
    =================================================== */
 .modal-overlay {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5); /* 透過度を下げて後ろの盤面を常に見えやすく */
-  backdrop-filter: blur(1px); border-radius: 12px;
-  display: flex; justify-content: center; align-items: center;
+  background: rgba(0,0,0,0.3); /* さらに薄くして、ポップアップが出ても網が綺麗に見えるように */
+  border-radius: 12px;
+  display: flex; justify-content: center; 
+  align-items: flex-end; /* ★中央ではなく、画面最下部に配置 */
+  padding-bottom: 80px;  /* 自分のスコア表示と被らない絶妙な浮き上がり位置 */
   z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
 }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
 .modal-card {
-  background: rgba(34, 34, 34, 0.92); /* カード自体もうっすら透過させて盤面の邪魔を減らす */
-  border: 3px solid var(--color-accent); border-radius: 20px;
-  padding: 24px; width: 85%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  transform: scale(0.85); transition: transform 0.2s ease;
+  background: rgba(28, 28, 28, 0.96); /* 高級感のある焼肉屋風のダークトーン */
+  border: 3px solid var(--color-accent); border-radius: 18px;
+  padding: 16px 20px; width: 92%; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+  transform: translateY(30px); transition: transform 0.2s ease;
 }
-.modal-overlay.active .modal-card { transform: scale(1); }
+.modal-overlay.active .modal-card { transform: translateY(0); }
 
-.modal-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; letter-spacing: 1px; }
+.modal-title { font-size: 15px; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; color: #fff; }
 
 .janken-row { display: flex; gap: 12px; justify-content: center; }
 .jbtn-huge {
-  font-size: 40px; flex: 1; height: 80px; border-radius: 14px;
-  border: 2px solid #444; background: #333; cursor: pointer;
+  font-size: 36px; flex: 1; height: 68px; border-radius: 12px;
+  border: 2px solid #444; background: #2a2a2a; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
 }
-.jbtn-huge:active { background: #555; transform: scale(0.92); }
+.jbtn-huge:active { background: #444; transform: scale(0.94); }
 
-.action-col { display: flex; flex-direction: column; gap: 12px; }
+.action-col { display: flex; flex-direction: column; gap: 8px; }
 .act-btn-huge {
-  width: 100%; padding: 16px 0; border-radius: 12px; border: 2px solid #444;
-  background: #333; color: #fff; font-size: 16px; font-weight: bold; cursor: pointer;
+  width: 100%; padding: 12px 0; border-radius: 10px; border: 2px solid #444;
+  background: #2a2a2a; color: #fff; font-size: 15px; font-weight: bold; cursor: pointer;
 }
-.act-btn-huge:disabled { opacity: 0.2; }
+.act-btn-huge:disabled { opacity: 0.15; }
 .act-btn-huge.selected { background: #542b00; color: #ffb050; border-color: var(--color-accent); }
-.act-btn-submit { background: var(--color-accent); color: #000; border: none; margin-top: 6px; }
+.act-btn-submit { background: var(--color-accent); color: #000; border: none; font-size: 15px; }
 
 /* ゲームオーバー・ヘルプ用 */
 .gameover-wrap {
-  text-align: center; padding: 30px 15px; height: 100%; width: 100%;
+  text-align: center; padding: 20px 15px; height: 100%; width: 100%;
   background: var(--color-card); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center;
 }
-.result-icon { font-size: 64px; margin-bottom: 10px; }
-.result-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
-.result-sub { font-size: 14px; color: var(--color-text-sub); margin-bottom: 30px; }
-.restart-btn { width: 100%; max-width: 220px; padding: 14px 0; border-radius: 10px; background: var(--color-accent); border: none; font-size: 16px; font-weight: bold; color: #000; cursor: pointer; }
+.result-icon { font-size: 54px; margin-bottom: 10px; }
+.result-title { font-size: 22px; font-weight: bold; margin-bottom: 8px; }
+.result-sub { font-size: 13px; color: var(--color-text-sub); margin-bottom: 20px; }
+.restart-btn { width: 100%; max-width: 200px; padding: 12px 0; border-radius: 10px; background: var(--color-accent); border: none; font-size: 15px; font-weight: bold; color: #000; cursor: pointer; }
 
-.help-text { font-size: 13px; text-align: left; color: #ccc; line-height: 1.6; max-height: 260px; overflow-y: auto; margin-bottom: 15px; padding: 5px; }
+.help-text { font-size: 13px; text-align: left; color: #ccc; line-height: 1.6; max-height: 220px; overflow-y: auto; margin-bottom: 15px; padding: 5px; }
 </style>
 </head>
 <body>
@@ -190,13 +192,12 @@ function initGame() {
   var cells = [];
   for (var r = 0; r < 3; r++) {
     for (var c = 0; c < 5; c++) {
-      // 最初はミート(肉)をnull（空っぽ）で生成し、演出アニメで1個ずつ入れる
-      cells.push({ r: r, c: c, meat: null, isAnimating: false });
+      cells.push({ r: r, c: c, meat: null });
     }
   }
   G = {
     screen: 'title', // title, play, gameover
-    phase: 'setup',  // setup(肉並べ中), janken, action, confirm
+    phase: 'setup',  // setup, janken, action, confirm
     currentPlayer: PLAYER, actionDone: false, selectedAction: null,
     scores: [0, 0], gameOver: false, log: 'いざ、限界焼肉勝負！',
     cells: cells, turn: 1, npcThinking: false
@@ -204,31 +205,28 @@ function initGame() {
 }
 initGame();
 
-// NEW: お肉を左から順番に網にセットしていく演出
 function startMeatSetupAnimation() {
   G.phase = 'setup';
-  G.log = '店員が新鮮なお肉を運んできた…！';
+  G.log = '新鮮なお肉が網に並べられています…';
   render();
 
-  var midRowCols = [0, 1, 2, 3, 4]; // 中央列の列インデックス
-  var delay = 350; // お肉が並ぶ間隔 (ミリ秒)
+  var midRowCols = [0, 1, 2, 3, 4];
+  var delay = 300; // 少しテンポを速く調整
 
   midRowCols.forEach(function(colIndex, index) {
     setTimeout(function() {
-      // 中央列 (r=1) のセルに対象の肉をセット
       var cell = getCell(1, colIndex);
       if (cell) {
         cell.meat = { status: 'raw' };
-        render(); // お肉を乗せて再描画（CSSアニメが発火）
+        render();
       }
 
-      // 5個すべての肉が並び終わったら、じゃんけんフェーズに移行
       if (index === midRowCols.length - 1) {
         setTimeout(function() {
           G.phase = 'janken';
-          G.log = '第' + G.turn + '回戦 — さあ、じゃんけんだ！';
+          G.log = '第' + G.turn + '回戦 — じゃんけんポン！';
           render();
-        }, 500);
+        }, 400);
       }
     }, (index + 1) * delay);
   });
@@ -267,12 +265,12 @@ function doAction(action, cell, player) {
     cell.meat = null;
     if (nr < 0 || nr > 2) {
       G.scores[player]++;
-      msg = (player === PLAYER) ? '🍖 おじさんの胃袋に直撃！' : '😱 あなたの皿に滑り込んできた！';
+      msg = (player === PLAYER) ? '🍖 おじさんの皿に押し込んだ！' : '😱 自分の皿に滑り込んできた…！';
       if (remainingMeat() === 0) { G.gameOver = true; G.screen = 'gameover'; }
     } else {
       var target = getCell(nr, cell.c);
       target.meat = meatCopy;
-      msg = '肉の位置がスライドした！';
+      msg = '肉の位置をスライドさせた！';
     }
   }
   return msg;
@@ -289,7 +287,7 @@ function npcAct() {
   else if (moveCells.length > 0 && Math.random() < 0.6) { action = 'move'; cell = moveCells[Math.floor(Math.random() * moveCells.length)]; }
   else if (bakeCells.length > 0) { action = 'bake'; cell = bakeCells[Math.floor(Math.random() * bakeCells.length)]; }
   else if (moveCells.length > 0) { action = 'move'; cell = moveCells[Math.floor(Math.random() * moveCells.length)]; }
-  else { endTurn(); G.log = 'おじさんは満腹でパスした。'; G.npcThinking = false; render(); return; }
+  else { endTurn(); G.log = 'おじさんはお腹いっぱいでパスした。'; G.npcThinking = false; render(); return; }
 
   G.log = doAction(action, cell, NPC); G.npcThinking = false;
   if (!G.gameOver) endTurn();
@@ -302,7 +300,7 @@ window.playJanken = function(choice) {
   var ems = ['✊','✌️','✋']; var emoji = ems[choice] + ' vs ' + ems[npc];
   if (res === 'draw') { G.log = emoji + ' あいこ！もう一度！'; render(); return; }
   if (res === 'win') {
-    G.currentPlayer = PLAYER; G.log = emoji + ' あなたの勝ち！行動を選んでください。'; G.phase = 'action'; render();
+    G.currentPlayer = PLAYER; G.log = emoji + ' あなたの勝ち！行動を選択してください。'; G.phase = 'action'; render();
   } else {
     G.currentPlayer = NPC; G.log = emoji + ' おじさんの勝ち…'; G.phase = 'action'; G.npcThinking = true; render();
     setTimeout(npcAct, 1200);
@@ -324,14 +322,14 @@ window.cellClick = function(r, c) {
 };
 
 window.confirmEnd = function() {
-  endTurn(); G.log = '第' + G.turn + '回戦 — さあ、じゃんけんだ！'; render();
+  endTurn(); G.log = '第' + G.turn + '回戦 — じゃんけんポン！'; render();
 };
 
 window.clickStartGame = function() {
   G.screen = 'play';
-  initGame(); // 初期化
-  G.screen = 'play'; // プレイ画面へ切替
-  startMeatSetupAnimation(); // アニメーション開始
+  initGame();
+  G.screen = 'play';
+  startMeatSetupAnimation();
 };
 
 window.changeScreen = function(screenName) { G.screen = screenName; render(); };
@@ -345,7 +343,7 @@ function render() {
   // 1. タイトル画面
   if (G.screen === 'title') {
     if (G.phase === 'help') {
-      app.innerHTML = '<div class="gameover-wrap"><div class="result-title" style="color:var(--color-accent)">限界焼肉のルール</div><div class="help-text"><b>【どんなゲーム？】</b><br>じゃんけんに勝ってアクションを起こし、中央の網の上にある肉を相手の皿に押し付け合う限界突破の満腹バトルゲームです！<br><br><b>【勝利条件】</b><br>網の上の肉がすべてなくなった時、<b>食べた枚数が「少ない」ほうの勝ち</b>です（相手に多く食わせたら勝ち）。<br><br><b>【ゲームの流れ】</b><br>1. 画面中央のポップアップでじゃんけんをします。<br>2. 勝った側がアクション（肉を育てる/進める）を選択します。<br>3. <b>「肉をひっくり返す（焼く）」</b>：生の肉(🥩)を焼き肉(🍖)へ進化させます。動かすにはまず焼く必要があります。<br>4. <b>「肉を前に進める」</b>：焼けた肉(🍖)を相手側へ1マス押し出します。一番奥まで押し込むと相手が強制的に完食（得点）！<br>5. 網の上の肉がすべて消えるまでターンを繰り返します。</div><button class="title-btn" style="width:80%" onclick="closeHelp()">タイトルへ戻る</button></div>';
+      app.innerHTML = '<div class="gameover-wrap"><div class="result-title" style="color:var(--color-accent)">限界焼肉のルール</div><div class="help-text"><b>【どんなゲーム？】</b><br>じゃんけんに勝ってアクションを起こし、中央の網の上にある肉を相手の皿に押し付け合う満腹バトルゲームです！<br><br><b>【勝利条件】</b><br>網の上の肉がすべてなくなった時、<b>食べた枚数が「少ない」ほうの勝ち</b>です。<br><br><b>【ゲームの流れ】</b><br>1. 画面下部でじゃんけんをします。<br>2. 勝った側がアクション（肉を育てる/進める）を選択します。<br>3. <b>「肉をひっくり返す（焼く）」</b>：生の肉(🥩)を焼き肉(🍖)へ進化させます。<br>4. <b>「肉を前に進める」</b>：焼けた肉(🍖)を相手側へ1マス押し出します。一番奥まで押し込むと相手が強制完食！</div><button class="title-btn" style="width:80%" onclick="closeHelp()">タイトルへ戻る</button></div>';
     } else {
       app.innerHTML = '<div class="title-screen"><div class="title-logo">限界焼肉</div><div class="title-sub">〜 奢りを賭けたトング捌き 〜</div><div class="title-btns"><button class="title-btn main-btn" onclick="clickStartGame()">ゲーム開始</button><button class="title-btn" onclick="showHelp()">遊び方</button></div></div>';
     }
@@ -384,7 +382,6 @@ function render() {
   var showOverlay = false;
   var overlayContentHTML = '';
 
-  // setup（演出中）の時は何も表示せず網だけを見せる
   if (G.phase === 'janken' && !G.npcThinking) {
     showOverlay = true;
     overlayContentHTML = '<div class="modal-title">👊 じゃんけんポン！ ✋</div>'
@@ -396,14 +393,13 @@ function render() {
   } else if (G.phase === 'action' && G.currentPlayer === PLAYER && !G.selectedAction) {
     showOverlay = true;
     var hasBake = getBakeCells().length > 0; var hasMove = getMoveCells(PLAYER).length > 0;
-    overlayContentHTML = '<div class="modal-title">【あなたのターン】行動の選択</div>'
+    overlayContentHTML = '<div class="modal-title">【あなたのターン】行動を選択</div>'
       + '<div class="action-col">'
       + '  <button class="act-btn-huge" onclick="selectAction(\'bake\')"' + (hasBake?'':' disabled') + '>🔥 肉をひっくり返す</button>'
       + '  <button class="act-btn-huge" onclick="selectAction(\'move\')"' + (hasMove?'':' disabled') + '>👉 肉を前に進める</button>'
       + '</div>';
   } else if (G.phase === 'action' && G.currentPlayer === PLAYER && G.selectedAction && !G.actionDone) {
-    // 肉の選択中、ポップアップは自動で閉じ、網の選択ハイライトだけが生きる（やりづらさ解消）
-    showOverlay = false;
+    showOverlay = false; // 盤面の肉をタップさせる間はポップアップを隠す
   } else if (G.phase === 'action' && G.actionDone) {
     showOverlay = true;
     overlayContentHTML = '<div class="modal-title">網の上の状況を確定します</div>'
@@ -446,7 +442,7 @@ function render() {
     + '  </div>'
     + '</div>'
 
-    // 4. ポップアップ
+    // 4. ポップアップ（画面下部に配置され、バックの盤面が常に30%透過で見える仕様）
     + '<div class="modal-overlay ' + (showOverlay ? 'active' : '') + '">'
     + '  <div class="modal-card">' + overlayContentHTML + '</div>'
     + '</div>';
