@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>限界焼肉 -ネオンエフェクトエディション-</title>
+<title>限界焼肉 -ネオン＆縦書きセリフエディション-</title>
 <style>
 :root {
   --color-bg: #121212;
@@ -32,32 +32,61 @@ body {
 }
 
 /* ===================================================
-   ★おじさん巨大イラストエリア（丸枠撤廃・バストアップ想定）
+   ★全面リニューアル：上段3カラムエリア（スコア・おじさん・縦書きセリフ）
    =================================================== */
-.ojisan-container {
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-end; /* 下（網側）に密着させる */
+.upper-layout-wrap {
+  display: flex;
+  height: 25vh; min-height: 140px;
   border-radius: 12px 12px 0 0;
-  padding: 8px; height: 26vh; min-height: 150px; position: relative; transition: all 0.3s;
+  padding: 6px;
+  position: relative; transition: all 0.3s;
+  gap: 6px;
+  align-items: stretch;
 }
-.ojisan-container.level-0 { background: radial-gradient(circle, #223a22 0%, #121a12 100%); border: 1px solid #335533; }
-.ojisan-container.level-1 { background: radial-gradient(circle, #3a3a22 0%, #1a1a12 100%); border: 1px solid var(--color-accent); }
-.ojisan-container.level-2 { background: radial-gradient(circle, #3a2222 0%, #1a1212 100%); border: 1px solid #ff6060; animation: tremble-bg 0.2s infinite; }
+.upper-layout-wrap.level-0 { background: radial-gradient(circle at center 60%, #223a22 0%, #121a12 100%); border: 1px solid #335533; }
+.upper-layout-wrap.level-1 { background: radial-gradient(circle at center 60%, #3a3a22 0%, #1a1a12 100%); border: 1px solid var(--color-accent); }
+.upper-layout-wrap.level-2 { background: radial-gradient(circle at center 60%, #3a2222 0%, #1a1212 100%); border: 1px solid #ff6060; animation: tremble-bg 0.2s infinite; }
 
-/* 将来イラストを入れる枠。丸を廃止し、下部から生えるバストアップ用構造 */
-.ojisan-graphic-wrap {
-  height: 110px; display: flex; align-items: flex-end; justify-content: center;
-  position: relative; width: 100%; bottom: -8px; /* 網の境界線に接地させる */
+/* 左側端：縦積みスコア（上段内に移設） */
+.upper-sidebar-scores {
+  width: 68px; display: flex; flex-direction: column; justify-content: space-around;
+  background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 2px; flex-shrink: 0; text-align: center;
+}
+.side-score-box { width: 100%; }
+.side-score-box.opp { color: #ff6060; }
+.side-score-box.self { color: #5c9eff; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 4px; }
+.side-label { font-size: 8px; color: var(--color-text-sub); font-weight: bold; line-height: 1.2; }
+.side-num { font-size: 18px; font-weight: 900; }
+.side-num small { font-size: 8px; font-weight: normal; color: var(--color-text-sub); }
+.vs-sign { font-size: 9px; color: #555; font-weight: bold; margin: 2px 0; }
+
+/* 中央：おじさん巨大配置エリア */
+.ojisan-center-graphic {
+  flex: 1; display: flex; align-items: flex-end; justify-content: center;
+  position: relative; overflow: hidden; bottom: -6px; /* 網への密着感 */
 }
 .ojisan-character {
-  font-size: 72px; line-height: 1; transition: all 0.2s;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+  font-size: 84px; line-height: 1; transition: all 0.2s;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
+  z-index: 2;
 }
 .level-2 .ojisan-character { animation: tremble 0.15s infinite; }
 
-.ojisan-serif {
-  font-size: 13px; font-weight: bold; color: #fff; text-align: center;
-  background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.1); width: 95%; position: absolute; top: 8px; z-index: 5;
+/* 右側端：縦書きコメントセリフ */
+.ojisan-serif-vertical {
+  width: 45px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.5); border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1); padding: 6px 2px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+.serif-text-v {
+  writing-mode: vertical-rl; text-orientation: mixed;
+  font-size: 11px; font-weight: bold; color: #fff;
+  letter-spacing: 2px; line-height: 1.3;
+  max-height: 100%; overflow: hidden;
+  text-shadow: 1px 1px 2px #000;
 }
 
 @keyframes tremble {
@@ -69,29 +98,15 @@ body {
   100% { transform: translate(1px, 1px) rotate(1deg); }
 }
 @keyframes tremble-bg {
-  0% { filter: brightness(1); } 50% { filter: brightness(1.2); } 100% { filter: brightness(1); }
+  0% { filter: brightness(1); } 50% { filter: brightness(1.15); } 100% { filter: brightness(1); }
 }
 
 /* ===================================================
    ★修正：天地を15%縮小したメイン対戦エリア
    =================================================== */
 .battle-arena {
-  display: flex; flex: 1; gap: 6px; min-height: 0;
+  display: flex; flex: 1; min-height: 0;
 }
-
-/* 左側：直感的な縦積みスコア（高さをスリムに圧縮） */
-.sidebar-scores {
-  width: 76px; display: flex; flex-direction: column; justify-content: space-between;
-  background: var(--color-card); border-radius: 12px; border: 1px solid var(--color-border);
-  padding: 8px 2px; flex-shrink: 0;
-}
-.side-score-box { text-align: center; width: 100%; }
-.side-score-box.opp { color: #ff6060; border-bottom: 1px dashed #333; padding-bottom: 8px; }
-.side-score-box.self { color: #5c9eff; border-top: 1px dashed #333; padding-top: 8px; }
-.side-label { font-size: 9px; color: var(--color-text-sub); font-weight: bold; line-height: 1.2; margin-bottom: 2px; }
-.side-num { font-size: 22px; font-weight: 900; }
-.side-num small { font-size: 9px; font-weight: normal; color: var(--color-text-sub); }
-.vs-sign { font-size: 10px; color: #444; font-weight: bold; text-align: center; margin: auto 0; }
 
 /* 右側：網（グラデーションによる鉄格子表現。高さを圧縮） */
 .grid-container {
@@ -132,11 +147,10 @@ body {
   margin-top: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 .badge-raw    { background: #1a521a; color: #a0ffa0; border: 1px solid #2d7a2d; }
-/* ★修正：育った ➔ 焼けた */
 .badge-cooked { background: #663300; color: #ffb050; border: 1px solid #8c4600; }
 
 /* ===================================================
-   ★完全復活：大迫力のネオンカラーじゃんけんモーダル
+   ★大迫力のネオンカラーじゃんけんモーダル
    =================================================== */
 .center-overlay {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -153,11 +167,7 @@ body {
 }
 .center-overlay.active .center-card { transform: scale(1); }
 
-/* ドカンと大きく表示するネオン判定テキスト */
-.jk-result-huge {
-  font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 5px; letter-spacing: 2px;
-}
-/* ★NEW: 勝敗に応じたネオンカラー演出（鮮やかなネオン） */
+.jk-result-huge { font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 5px; letter-spacing: 2px; }
 .jk-res-win  { color: #40ff40; text-shadow: 0 0 15px rgba(64,255,64,0.7); }
 .jk-res-lose { color: #ff4040; text-shadow: 0 0 15px rgba(255,40,40,0.7); }
 .jk-res-draw { color: #ffff40; text-shadow: 0 0 15px rgba(255,255,64,0.7); }
@@ -262,7 +272,6 @@ function initGame() {
     currentPlayer: PLAYER, actionDone: false, selectedAction: null,
     scores: [0, 0], gameOver: false, log: 'いざ、限界焼肉勝負！',
     cells: cells, turn: 1, npcThinking: false,
-    // じゃんけん結果表示用の一時記憶
     lastJanken: { result: '', vsEmoji: '', vsText: '', classStr: '' }
   };
 }
@@ -346,13 +355,11 @@ function npcAct() {
   render();
 }
 
-// じゃんけん処理：中央デカ文字ネオンモーダル用にフェーズを切り替える
 window.playJanken = function(choice) {
   if (G.phase !== 'janken' || G.npcThinking) return;
   var npc = Math.floor(Math.random() * 3); var res = jkResult(choice, npc);
   var ems = ['✊','✌️','✋'];
   
-  // ネオンモーダル表示用の情報を一時記憶
   G.lastJanken = { detailText: ems[choice] + ' vs ' + ems[npc] };
 
   if (res === 'draw') {
@@ -372,20 +379,17 @@ window.playJanken = function(choice) {
   }
 };
 
-// じゃんけんネオンモーダルを表示
 function showModal(isDraw) {
   document.getElementById('modal-title').innerHTML = G.lastJanken.result;
   document.getElementById('modal-title').className = 'jk-result-huge ' + G.lastJanken.classStr;
   document.getElementById('modal-body').innerHTML = G.lastJanken.detailText;
   
-  // 次へ進むボタンを「あいこ」の時は非表示にする
   var nextBtn = document.querySelector('.jk-next-btn');
   nextBtn.style.display = isDraw ? 'none' : 'block';
   nextBtn.innerHTML = G.currentPlayer === PLAYER ? 'トングを構える ➔' : 'おじさんの番を見届ける ➔';
 
   document.getElementById('janken-modal').classList.add('active');
   
-  // あいこの場合は1.1秒後に自動で閉じて再戦
   if (isDraw) {
     setTimeout(function() { closeModal(); }, 1100);
   }
@@ -442,9 +446,9 @@ function render() {
   var ojiLevel = npcEaten >= 4 ? 2 : (npcEaten >= 2 ? 1 : 0);
   var ojiEmojis = ['👴', '😰', '😱'];
   var ojiSerifs = [
-    '「若いんだからもっと食えよ〜」',
-    '「お、おい…もう網の上に置くなよ…？」',
-    '「ウプッ…お冷…誰かお冷をくれ……」'
+    '若いんだからもっと食えよ〜！',
+    'お、おい…もう網に載せるな…',
+    'ウプッ…誰かお冷をくれ……'
   ];
 
   var gridHTML = '';
@@ -459,7 +463,6 @@ function render() {
     var inner = '';
     if (cell.meat) {
       var meatContent = cell.meat.status === 'raw' ? '🥩' : '🍖';
-      // ★修正：育った ➔ 焼けた
       var badge = cell.meat.status === 'raw' ? '<span class="meat-badge badge-raw">生肉</span>' : '<span class="meat-badge badge-cooked">焼けた</span>';
       inner = '<div class="cell-inner"><div class="meat-icon">' + meatContent + '</div>' + badge + '</div>';
     }
@@ -480,18 +483,26 @@ function render() {
     actionHTML = '<div class="action-title">行動を選択し、対象の肉をタップ！</div><div class="act-btns"><button class="abtn' + (G.selectedAction==='bake'?' active':'') + '" onclick="selectAction(\'bake\')"' + (hasBake?'':' disabled') + '>🔥 焼く</button><button class="abtn' + (G.selectedAction==='move'?' active':'') + '" onclick="selectAction(\'move\')"' + (hasMove?'':' disabled') + '>👉 進める</button>' + (G.actionDone ? '<button class="abtn abtn-submit" onclick="confirmEnd()">終了 ➔</button>' : '') + '</div>';
   }
 
+  // ★上段を3カラム構造（[左:縦スコア] [中央:大おじさん] [右:縦書きセリフ]）にしてHTMLを再構築
   app.innerHTML = 
-    '<div class="ojisan-container level-' + ojiLevel + '">'
-    + '  <div class="ojisan-serif">' + ojiSerifs[ojiLevel] + '</div>'
-    + '  <div class="ojisan-graphic-wrap"><div class="ojisan-character">' + ojiEmojis[ojiLevel] + '</div></div>'
+      '<div class="upper-layout-wrap level-' + ojiLevel + '">'
+    + '  '
+    + '  <div class="upper-sidebar-scores">'
+    + '    <div class="side-score-box opp"><div class="side-label">おじさん</div><div class="side-num">' + G.scores[PLAYER] + ' <small>枚</small></div></div>'
+    + '    <div class="vs-sign">VS</div>'
+    + '    <div class="side-score-box self"><div class="side-label">あなた</div><div class="side-num">' + G.scores[NPC] + ' <small>枚</small></div></div>'
+    + '  </div>'
+    + '  '
+    + '  <div class="ojisan-center-graphic">'
+    + '    <div class="ojisan-character">' + ojiEmojis[ojiLevel] + '</div>'
+    + '  </div>'
+    + '  '
+    + '  <div class="ojisan-serif-vertical">'
+    + '    <div class="serif-text-v">' + ojiSerifs[ojiLevel] + '</div>'
+    + '  </div>'
     + '</div>'
     
     + '<div class="battle-arena">'
-    + '  <div class="sidebar-scores">'
-    + '    <div class="side-score-box opp"><div class="side-label">おじさん<br>完食</div><div class="side-num">' + G.scores[PLAYER] + ' <small>枚</small></div></div>'
-    + '    <div class="vs-sign">VS</div>'
-    + '    <div class="side-score-box self"><div class="side-label">あなた<br>完食</div><div class="side-num">' + G.scores[NPC] + ' <small>枚</small></div></div>'
-    + '  </div>'
     + '  <div class="grid-container"><div class="grid">' + gridHTML + '</div></div>'
     + '</div>'
     
