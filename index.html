@@ -506,6 +506,7 @@ function renderGameOver(app) {
   app.innerHTML = '<div class="gameover-wrap"><div class="result-icon">' + icon + '</div><div class="result-title">' + title + '</div><div class="result-sub">' + sub + '</div><div class="result-scores"><div class="rscore-card' + (!playerWon&&!draw?' loser':'') + '"><div class="rscore-label">あなたが食べた量</div><div class="rscore-num">' + myEaten + ' 枚</div></div><div class="rscore-card' + (playerWon?' loser':'') + '"><div class="rscore-label">おじさんが食べた量</div><div class="rscore-num">' + npcEaten + ' 枚</div></div></div><button class="restart-btn" onclick="restart()">もう一軒行く（再戦）</button></div>';
 }
 
+  
 render();
 </script>
 </body>
