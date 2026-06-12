@@ -31,46 +31,83 @@ body {
   position: relative; justify-content: flex-start; /* 上から順に詰める */
 }
 
-/* ===================================================
-   タイトル画面
-   =================================================== */
-.title-screen {
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
-  height: 100%; text-align: center; padding: 20px;
+/* ★NEW: じゃんけん中央アクティブエリア（ルーレット風） */
+.janken-center-zone {
+  width: 72px; height: 130px; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; gap: 6px;
+  position: relative; perspective: 100px;
 }
-.title-logo {
-  font-size: 44px; font-weight: 900; color: #ff3333; text-shadow: 3px 3px 0px #000, 0 0 20px rgba(232,160,32,0.6);
-  margin-bottom: 8px; letter-spacing: 2px; animation: glow 1.5s ease-in-out infinite alternate;
+.jbtn-mini {
+  width: 50px; height: 36px; font-size: 20px;
+  border-radius: 8px; border: 1px solid var(--color-border);
+  background: #2a2a2a; color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
 }
-.title-sub { font-size: 13px; color: var(--color-text-sub); margin-bottom: 40px; font-weight: bold; }
-.title-btns { display: flex; flex-direction: column; gap: 14px; width: 80%; max-width: 250px; }
-.title-btn {
-  padding: 14px 0; border-radius: 12px; border: 2px solid #444; background: #222;
-  color: #fff; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.1s;
+/* じゃんけん時以外は半透明で触れなくする（煩わしさ解消） */
+.janken-center-zone.inactive {
+  opacity: 0.15; pointer-events: none; filter: grayscale(1);
 }
-.title-btn:active { transform: scale(0.95); }
-.title-btn.main-btn { background: var(--color-accent); color: #000; border: none; font-size: 17px; }
+/* じゃんけんアクティブ時のルーレット風アニメ効果 */
+.janken-center-zone.active .jbtn-mini {
+  animation: rouletteUpDown 2s infinite ease-in-out;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 8px rgba(232, 160, 32, 0.3);
+}
+.janken-center-zone.active .jbtn-mini:nth-child(2) { animation-delay: 0.3s; }
+.janken-center-zone.active .jbtn-mini:nth-child(3) { animation-delay: 0.6s; }
 
-@keyframes glow { from { text-shadow: 0 0 10px rgba(255,50,50,0.5); } to { text-shadow: 0 0 25px rgba(232,160,32,0.9); } }
+@keyframes rouletteUpDown {
+  0%, 100% { transform: translateZ(0); }
+  50% { transform: translateZ(5px) scale(1.05); background: #3a3a3a; }
+}
 
-/* ===================================================
-   ゲーム本編：レイアウト（1画面縦フィット＆盤面最大化）
-   =================================================== */
-.opp-header {
-  display: flex; align-items: flex-end; width: 100%; height: 100px; flex-shrink: 0;
+/* ★NEW: ポップアップ（後ろの盤面が見えるように透過） */
+.modal-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); /* 透過度を下げて後ろの盤面を常に見えやすく */
+  backdrop-filter: blur(1px); border-radius: 12px;
+  display: flex; justify-content: center; align-items: center;
+  z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
 }
-.opp-score-zone { width: 35%; display: flex; flex-direction: column; padding-left: 8px; }
-.score-title-big { font-size: 16px; font-weight: bold; line-height: 1.2; color: var(--color-text-sub); }
-.score-num-big { font-size: 48px; font-weight: 900; line-height: 1; letter-spacing: -2px; color: #fff; }
-.score-unit-big { font-size: 16px; font-weight: bold; margin-left: 4px; }
-.ojisan-container { width: 65%; height: 100%; display: flex; justify-content: center; align-items: flex-end; overflow: hidden; }
-.ojisan-avatar-big {
-  width: 90px; height: 90px; border-radius: 50%; background: #2a3d2a;
-  display: flex; align-items: center; justify-content: center; font-size: 48px;
-  border: 4px solid #555; transition: all 0.3s;
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+.modal-card {
+  background: rgba(34, 34, 34, 0.92); /* カード自体もうっすら透過させて盤面の邪魔を減らす */
+  border: 3px solid var(--color-accent); border-radius: 20px;
+  padding: 24px; width: 85%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  transform: scale(0.85); transition: transform 0.2s ease;
 }
-.level-1 .ojisan-avatar-big { background: #3d3d1a; border-color: var(--color-accent); }
-.level-2 .ojisan-avatar-big { background: #3d1a1a; border-color: #ff6060; animation: tremble 0.15s infinite; }
+.modal-overlay.active .modal-card { transform: scale(1); }
+
+.modal-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; letter-spacing: 1px; }
+
+/* ★NEW: タップ可能なターゲット */
+.selectable {
+  outline: 4px solid var(--color-accent); outline-offset: -3px;
+  background-color: #4a3410 !important; cursor: pointer; animation: pulse 0.6s infinite alternate;
+}
+@keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.97); } }
+
+/* ★NEW: おじさん巨大背景エリアを画面上部に大きく配置 */
+.ojisan-header {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  background: var(--color-card); border-radius: 12px; border: 1px solid var(--color-border);
+  padding: 10px; position: relative;
+}
+.ojisan-avatar {
+  width: 90px; height: 90px; /* サイズを大きく */
+  border-radius: 50%; background: #2a3d2a;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px; border: 3px solid #555; overflow: hidden;
+  transition: all 0.3s;
+}
+.level-1 .ojisan-avatar { background: #3d3d1a; border-color: var(--color-accent); }
+.level-2 .ojisan-avatar { background: #3d1a1a; border-color: #ff6060; animation: tremble 0.15s infinite; }
+.ojisan-serif {
+  font-size: 13px; font-weight: bold; color: var(--color-accent); margin-top: 6px;
+  min-height: 18px;
+}
 
 @keyframes tremble {
   0% { transform: translate(1px, 1px) rotate(0deg); }
@@ -81,133 +118,159 @@ body {
   100% { transform: translate(1px, 1px) rotate(1deg); }
 }
 
-.opp-comment-bar {
-  background: #ffffff; color: #000000; border: 3px solid #000000; border-radius: 30px;
-  padding: 4px 14px; font-size: 13px; font-weight: bold; text-align: center;
-  width: 100%; margin-top: 2px; margin-bottom: 6px; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-  min-height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+/* メインゲームエリア（左スコア、右盤面） */
+.main-game-area {
+  display: flex; flex: 1; gap: 8px; min-height: 0; /* 画面に収める */
 }
 
-/* ★改善：縦の余りをすべて網の拡大に充て、隙間を完全に潰す */
+/* 2. 左側：縦積みスコア＆じゃんけんスペース */
+.sidebar-left {
+  width: 85px; display: flex; flex-direction: column;
+  background: var(--color-card); border-radius: 12px; border: 1px solid var(--color-border);
+  padding: 8px 4px; justify-content: space-between; align-items: center;
+  position: relative;
+}
+.side-score { text-align: center; width: 100%; }
+.side-score.opp { color: #ff6060; }
+.side-score.self { color: #60a0ff; }
+.side-label { font-size: 10px; color: var(--color-text-sub); }
+.side-num { font-size: 22px; font-weight: bold; }
+.side-num small { font-size: 10px; }
+
+/* じゃんけん中央アクティブエリア（ルーレット風） */
+.janken-center-zone {
+  width: 72px; height: 130px; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; gap: 6px;
+  position: relative; perspective: 100px;
+}
+.jbtn-mini {
+  width: 50px; height: 36px; font-size: 20px;
+  border-radius: 8px; border: 1px solid var(--color-border);
+  background: #2a2a2a; color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+/* じゃんけん時以外は半透明で触れなくする（煩わしさ解消） */
+.janken-center-zone.inactive {
+  opacity: 0.15; pointer-events: none; filter: grayscale(1);
+}
+/* じゃんけんアクティブ時のルーレット風アニメ効果 */
+.janken-center-zone.active .jbtn-mini {
+  animation: rouletteUpDown 2s infinite ease-in-out;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 8px rgba(232, 160, 32, 0.3);
+}
+.janken-center-zone.active .jbtn-mini:nth-child(2) { animation-delay: 0.3s; }
+.janken-center-zone.active .jbtn-mini:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes rouletteUpDown {
+  0%, 100% { transform: translateZ(0); }
+  50% { transform: translateZ(5px) scale(1.05); background: #3a3a3a; }
+}
+
+/* 3. 右側：盤面を最大限広く確保 */
 .grid-container {
-  flex: 1; /* 残りの縦スペースをすべて引き受ける */
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
-  width: 100%; min-height: 0; /* flex内の縮小用おまじない */
+  flex: 1; display: flex; flex-direction: column;
 }
 .grid {
-  display: grid; grid-template-rows: repeat(3, 1fr); grid-template-columns: repeat(5, 1fr);
-  gap: 6px; background: #1a1108; border-radius: 12px; padding: 10px;
-  border: 4px solid #3d2b14; 
-  width: 100%; height: 100%; /* コンテナいっぱいに大きく広がる */
-  max-height: 280px; /* 縦長のスマホでも間延びしすぎないよう絶妙な上限を設定 */
-  aspect-ratio: 5 / 3.3;
+  flex: 1; display: grid; grid-template-rows: repeat(3, 1fr); grid-template-columns: repeat(5, 1fr);
+  gap: 5px; background: #1a1108; border-radius: 12px; padding: 8px;
+  border: 3px solid #3d2b14; touch-action: manipulation;
 }
-.cell { border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; }
+.cell {
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  position: relative; transition: background-color 0.2s;
+}
 .zone-opp  { background: #261212; border: 1px solid #4a1a1a; }
 .zone-mid  { background: #130f0a; border: 1px solid #332514; }
 .zone-self { background: #122612; border: 1px solid #1a4a1a; }
 
 .selectable {
-  outline: 4px solid var(--color-accent); outline-offset: -3px;
-  background-color: #4a3410 !important; cursor: pointer; animation: pulse 0.6s infinite alternate;
+  outline: 3px solid var(--color-accent); outline-offset: -3px;
+  background-color: #4a3410 !important; cursor: pointer;
+  animation: pulse 0.8s infinite alternate;
 }
-@keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.96); } }
+@keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.97); } }
 
-.cell-inner {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;
-  animation: meatPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-}
-.meat-icon { font-size: 32px; line-height: 1; } /* 網が大きくなった分、お肉も一回り拡大 */
-.meat-badge { font-size: 10px; font-weight: bold; padding: 1px 4px; border-radius: 3px; margin-top: 2px; }
+.cell-inner { display: flex; flex-direction: column; align-items: center; }
+.meat-icon { font-size: 26px; line-height: 1; }
+.meat-badge { font-size: 8px; font-weight: bold; padding: 1px 3px; border-radius: 3px; margin-top: 1px; }
 .badge-raw    { background: #1a4a1a; color: #a0ffa0; }
 .badge-cooked { background: #542b00; color: #ffb050; }
 
-@keyframes meatPopIn {
-  0% { transform: scale(0) rotate(-20deg); opacity: 0; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+/* 下部操作パネル（片手で届く位置） */
+.action-panel {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 12px;
 }
+.action-title { font-size: 12px; color: var(--color-text-sub); text-align: center; margin-bottom: 10px; }
 
-.mini-log { font-size: 12px; color: var(--color-text-sub); text-align: center; margin-top: 6px; margin-bottom: 2px; min-height: 16px; flex-shrink: 0; }
-
-/* ★改善：自分のスコアを網のすぐ下に吸い付かせ、上寄配置に */
-.self-footer { display: flex; flex-direction: column; width: 100%; padding-left: 8px; margin-top: 2px; flex-shrink: 0; }
-
-/* ===================================================
-   操作系：画面下部にぴったり張り付くポップアップ
-   =================================================== */
-.bottom-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.15); border-radius: 12px;
-  display: flex; justify-content: center; align-items: flex-end;
-  padding-bottom: 65px; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
-}
-.bottom-overlay.active { opacity: 1; pointer-events: auto; }
-
-.bottom-card {
-  background: rgba(28, 28, 28, 0.96); border: 3px solid var(--color-accent); border-radius: 18px;
-  padding: 14px 20px; width: 92%; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.7);
-  transform: translateY(20px); transition: transform 0.2s ease;
-}
-.bottom-overlay.active .bottom-card { transform: translateY(0); }
-.bottom-title { font-size: 14px; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; color: #fff; }
-
-.janken-row { display: flex; gap: 12px; justify-content: center; }
-.jbtn-huge {
-  font-size: 34px; flex: 1; height: 64px; border-radius: 12px;
-  border: 2px solid #444; background: #2a2a2a; cursor: pointer;
+.janken-btns { display: flex; gap: 10px; justify-content: center; }
+.jbtn {
+  font-size: 32px; flex: 1; max-width: 80px; height: 64px;
+  border-radius: 10px; border: 1px solid var(--color-border);
+  background: #2a2a2a; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
 }
-.jbtn-huge:active { background: #444; transform: scale(0.94); }
+.jbtn:active { background: #444; transform: scale(0.95); }
 
-.action-col { display: flex; flex-direction: column; gap: 8px; }
-.act-btn-huge {
-  width: 100%; padding: 12px 0; border-radius: 10px; border: 2px solid #444;
-  background: #2a2a2a; color: #fff; font-size: 15px; font-weight: bold; cursor: pointer;
+.act-btns { display: flex; gap: 10px; justify-content: center; width: 100%; }
+.abtn {
+  flex: 1; padding: 12px 0; border-radius: 10px;
+  border: 1px solid var(--color-border); background: #2a2a2a;
+  font-size: 14px; font-weight: bold; color: var(--color-text-main); cursor: pointer;
 }
-.act-btn-huge:disabled { opacity: 0.15; }
-.act-btn-huge.selected { background: #542b00; color: #ffb050; border-color: var(--color-accent); }
-.act-btn-submit { background: var(--color-accent); color: #000; border: none; font-size: 15px; }
+.abtn:disabled { opacity: 0.3; }
+.abtn.active { background: #542b00; color: #ffb050; border-color: var(--color-accent); }
+.abtn-submit { background: var(--color-accent); color: #000; border: none; }
+
+.log-box {
+  font-size: 13px; color: var(--color-text-sub);
+  min-height: 48px; text-align: center; padding: 8px 12px;
+  background: var(--color-card); border-radius: 10px;
+  border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center;
+}
 
 /* ===================================================
-   画面中央：じゃんけん結果モーダル
+   タイトル画面
    =================================================== */
-.center-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); border-radius: 12px;
-  display: flex; justify-content: center; align-items: center;
-  z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+.title-screen {
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  height: 100%; text-align: center; padding: 20px;
 }
-.center-overlay.active { opacity: 1; pointer-events: auto; }
-
-.center-card {
-  background: #1e1e1e; border: 4px solid #444; border-radius: 24px;
-  padding: 24px; width: 82%; text-align: center; box-shadow: 0 10px 35px rgba(0,0,0,0.8);
-  transform: scale(0.8); transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.title-logo {
+  font-size: 48px; font-weight: 900; color: #ff3333; text-shadow: 3px 3px 0px #000, 0 0 20px rgba(232,160,32,0.6);
+  margin-bottom: 8px; letter-spacing: 2px; animation: glow 1.5s ease-in-out infinite alternate;
 }
-.center-overlay.active .center-card { transform: scale(1); }
-
-.jk-result-huge { font-size: 44px; font-weight: 900; line-height: 1.1; margin-bottom: 5px; letter-spacing: 2px; }
-.jk-res-win  { color: #40ff40; text-shadow: 0 0 15px rgba(64,255,64,0.6); }
-.jk-res-lose { color: #ff4040; text-shadow: 0 0 15px rgba(255,40,40,0.6); }
-.jk-res-draw { color: #ffff40; text-shadow: 0 0 15px rgba(255,255,64,0.6); }
-
-.jk-vs-detail { font-size: 18px; margin-bottom: 20px; color: #eee; background: #2a2a2a; padding: 6px 0; border-radius: 10px; }
-.jk-next-btn {
-  width: 100%; padding: 14px 0; border-radius: 12px; background: var(--color-accent);
-  color: #000; font-size: 16px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(232,160,32,0.3);
+.title-sub { font-size: 14px; color: var(--color-text-sub); margin-bottom: 60px; font-weight: bold; }
+.title-btns { display: flex; flex-direction: column; gap: 16px; width: 80%; max-width: 260px; }
+.title-btn {
+  padding: 16px 0; border-radius: 12px; border: 2px solid #444; background: #222;
+  color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.1s;
 }
+.title-btn:active { transform: scale(0.95); }
+.title-btn.main-btn { background: var(--color-accent); color: #000; border: none; font-size: 18px; }
 
-/* ゲームオーバー・ヘルプ用 */
+@keyframes glow { from { text-shadow: 0 0 10px rgba(255,50,50,0.5); } to { text-shadow: 0 0 25px rgba(232,160,32,0.9); } }
+
+/* ===================================================
+   ゲームオーバー画面
+   =================================================== */
 .gameover-wrap {
-  text-align: center; padding: 20px 15px; height: 100%; width: 100%;
+  text-align: center; padding: 30px 15px; height: 100%;
   background: var(--color-card); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center;
 }
-.result-icon { font-size: 54px; margin-bottom: 10px; }
-.result-title { font-size: 22px; font-weight: bold; margin-bottom: 8px; }
-.result-sub { font-size: 13px; color: var(--color-text-sub); margin-bottom: 20px; }
+.result-icon { font-size: 64px; margin-bottom: 10px; }
+.result-title { font-size: 24px; font-weight: bold; }
+.result-sub { font-size: 13px; color: var(--color-text-sub); margin-bottom: 20px; padding: 0 10px; }
+.result-scores { display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; width: 100%; }
+.rscore-card { padding: 10px; border-radius: 8px; border: 1px solid var(--color-border); background: #252525; flex: 1; }
+.rscore-card.loser { border: 2px solid #ff6060; background: #331515; }
+.rscore-label { font-size: 11px; color: var(--color-text-sub); }
+.rscore-num { font-size: 24px; font-weight: bold; }
 .restart-btn { width: 100%; max-width: 200px; padding: 12px 0; border-radius: 10px; background: var(--color-accent); border: none; font-size: 15px; font-weight: bold; color: #000; cursor: pointer; }
-
-.help-text { font-size: 13px; text-align: left; color: #ccc; line-height: 1.6; max-height: 220px; overflow-y: auto; margin-bottom: 15px; padding: 5px; }
 </style>
 </head>
 <body>
@@ -217,50 +280,53 @@ body {
 <script>
 const PLAYER = 0, NPC = 1;
 const JK = ['✊','✌️','✋'];
+const JK_N = ['グー','チョキ','パー'];
 
-const IMAGES = { meat_raw: '', meat_cooked: '', ojisan_0: '', ojisan_1: '', ojisan_2: '' };
 var G = {};
 
 function initGame() {
   var cells = [];
   for (var r = 0; r < 3; r++) {
     for (var c = 0; c < 5; c++) {
-      cells.push({ r: r, c: c, meat: null });
+      // 最初はミート(肉)をnull（空っぽ）で生成し、演出アニメで1個ずつ入れる
+      cells.push({ r: r, c: c, meat: null, isAnimating: false });
     }
   }
   G = {
     screen: 'title', // title, play, gameover
-    phase: 'setup',  // setup, janken, janken_result, action, confirm
+    phase: 'setup',  // setup(肉並べ中), janken, action, confirm
     currentPlayer: PLAYER, actionDone: false, selectedAction: null,
     scores: [0, 0], gameOver: false, log: 'いざ、限界焼肉勝負！',
-    cells: cells, turn: 1, npcThinking: false,
-    lastJanken: { result: '', detailText: '', classStr: '' }
+    cells: cells, turn: 1, npcThinking: false
   };
 }
 initGame();
 
+// NEW: お肉を左から順番に網にセットしていく演出
 function startMeatSetupAnimation() {
   G.phase = 'setup';
-  G.log = '新鮮なお肉が網に並べられています…';
+  G.log = '店員が新鮮なお肉を運んできた…！';
   render();
 
-  var midRowCols = [0, 1, 2, 3, 4];
-  var delay = 250; // さらにテンポ良く
+  var midRowCols = [0, 1, 2, 3, 4]; // 中央列の列インデックス
+  var delay = 350; // お肉が並ぶ間隔 (ミリ秒)
 
   midRowCols.forEach(function(colIndex, index) {
     setTimeout(function() {
+      // 中央列 (r=1) のセルに対象の肉をセット
       var cell = getCell(1, colIndex);
       if (cell) {
         cell.meat = { status: 'raw' };
-        render();
+        render(); // お肉を乗せて再描画（CSSアニメが発火）
       }
 
+      // 5個すべての肉が並び終わったら、じゃんけんフェーズに移行
       if (index === midRowCols.length - 1) {
         setTimeout(function() {
           G.phase = 'janken';
-          G.log = '第' + G.turn + '回戦 — じゃんけんポン！';
+          G.log = '第' + G.turn + '回戦 — さあ、じゃんけんだ！';
           render();
-        }, 350);
+        }, 500);
       }
     }, (index + 1) * delay);
   });
@@ -331,39 +397,14 @@ function npcAct() {
 window.playJanken = function(choice) {
   if (G.phase !== 'janken' || G.npcThinking) return;
   var npc = Math.floor(Math.random() * 3); var res = jkResult(choice, npc);
-  var ems = ['✊','✌️','✋'];
-  
-  G.phase = 'janken_result';
-  
-  if (res === 'draw') {
-    G.lastJanken = { result: 'あいこ！', detailText: ems[choice] + '  vs  ' + ems[npc], classStr: 'jk-res-draw' };
-    G.log = 'あいこ！もう一本！';
-    render();
-    setTimeout(function() {
-      G.phase = 'janken';
-      render();
-    }, 1000);
-  } else if (res === 'win') {
-    G.currentPlayer = PLAYER;
-    G.lastJanken = { result: '勝ち！', detailText: ems[choice] + ' (あなた) vs (相手) ' + ems[npc], classStr: 'jk-res-win' };
-    G.log = 'じゃんけん勝利！行動ターン。';
-    render();
+  var ems = ['✊','✌️','✋']; var emoji = ems[choice] + ' vs ' + ems[npc];
+  if (res === 'draw') { G.log = emoji + ' あいこ！もう一度！'; render(); return; }
+  if (res === 'win') {
+    G.currentPlayer = PLAYER; G.log = emoji + ' あなたの勝ち！行動を選んでください。'; G.phase = 'action'; render();
   } else {
-    G.currentPlayer = NPC;
-    G.lastJanken = { result: '負け…', detailText: ems[choice] + ' (あなた) vs (相手) ' + ems[npc], classStr: 'jk-res-lose' };
-    G.log = 'じゃんけん敗北…相手のターン。';
-    render();
-  }
-};
-
-window.closeJankenResult = function() {
-  if (G.currentPlayer === PLAYER) {
-    G.phase = 'action';
-  } else {
-    G.phase = 'action'; G.npcThinking = true;
+    G.currentPlayer = NPC; G.log = emoji + ' おじさんの勝ち…'; G.phase = 'action'; G.npcThinking = true; render();
     setTimeout(npcAct, 1200);
   }
-  render();
 };
 
 window.selectAction = function(action) {
@@ -381,14 +422,14 @@ window.cellClick = function(r, c) {
 };
 
 window.confirmEnd = function() {
-  endTurn(); G.log = '第' + G.turn + '回戦 — じゃんけんポン！'; render();
+  endTurn(); G.log = '第' + G.turn + '回戦 — さあ、じゃんけんだ！'; render();
 };
 
 window.clickStartGame = function() {
   G.screen = 'play';
-  initGame();
-  G.screen = 'play';
-  startMeatSetupAnimation();
+  initGame(); // 初期化
+  G.screen = 'play'; // プレイ画面へ切替
+  startMeatSetupAnimation(); // アニメーション開始
 };
 
 window.changeScreen = function(screenName) { G.screen = screenName; render(); };
@@ -399,33 +440,56 @@ window.restart = function() { window.clickStartGame(); };
 function render() {
   var app = document.getElementById('app');
 
+  // 1. タイトル画面
   if (G.screen === 'title') {
     if (G.phase === 'help') {
-      app.innerHTML = '<div class="gameover-wrap"><div class="result-title" style="color:var(--color-accent)">限界焼肉のルール</div><div class="help-text"><b>【どんなゲーム？】</b><br>じゃんけんに勝ってアクションを起こし、中央の網の上にある肉を相手の皿に押し付け合う満腹バトルゲームです！<br><br><b>【勝利条件】</b><br>網の上の肉がすべてなくなった時、<b>食べた枚数が「少ない」ほうの勝ち</b>です。<br><br><b>【ゲームの流れ】</b><br>1. 画面下部でじゃんけんをします。<br>2. 勝った側がアクション（肉を育てる/進める）を選択します。<br>3. <b>「肉をひっくり返す（焼く）」</b>：生の肉(🥩)を焼き肉(🍖)へ進化させます。<br>4. <b>「肉を前に進める」</b>：焼けた肉(🍖)を相手側へ1マス押し出します。一番奥まで押し込むと相手が強制完食！</div><button class="title-btn" style="width:80%" onclick="closeHelp()">タイトルへ戻る</button></div>';
+      app.innerHTML = '<div class="gameover-wrap"><div class="result-title" style="color:var(--color-accent)">限界焼肉のルール</div><div class="help-text"><b>【どんなゲーム？】</b><br>じゃんけんに勝ってアクションを起こし、中央の網の上にある肉を相手の皿に押し付け合う限界突破の満腹バトルゲームです！<br><br><b>【勝利条件】</b><br>網の上の肉がすべてなくなった時、<b>食べた枚数が「少ない」ほうの勝ち</b>です（相手に多く食わせたら勝ち）。<br><br><b>【ゲームの流れ】</b><br>1. 画面中央のポップアップでじゃんけんをします。<br>2. 勝った側がアクション（肉を育てる/進める）を選択します。<br>3. <b>「肉をひっくり返す（焼く）」</b>：生の肉(🥩)を焼き肉(🍖)へ進化させます。動かすにはまず焼く必要があります。<br>4. <b>「肉を前に進める」</b>：焼けた肉(🍖)を相手側へ1マス押し出します。一番奥まで押し込むと相手が強制的に完食（得点）！<br>5. 網の上の肉がすべて消えるまでターンを繰り返します。</div><button class="title-btn" style="width:80%" onclick="closeHelp()">タイトルへ戻る</button></div>';
     } else {
       app.innerHTML = '<div class="title-screen"><div class="title-logo">限界焼肉</div><div class="title-sub">〜 奢りを賭けたトング捌き 〜</div><div class="title-btns"><button class="title-btn main-btn" onclick="clickStartGame()">ゲーム開始</button><button class="title-btn" onclick="showHelp()">遊び方</button></div></div>';
     }
     return;
   }
 
+  // 2. ゲームオーバー画面
   if (G.screen === 'gameover') { renderGameOver(app); return; }
+
+  // 3. プレイ画面
+  var npcActive = G.currentPlayer === NPC;
+  var playerActive = G.currentPlayer === PLAYER && G.phase === 'action';
 
   var npcEaten = G.scores[PLAYER];
   var ojiLevel = npcEaten >= 4 ? 2 : (npcEaten >= 2 ? 1 : 0);
   var ojiEmojis = ['👴', '😰', '😱'];
-  var ojiSerifs = ['「若いんだからもっと食えよ〜」', '「おいおい…もう網の上に置くなよ？」', '「ウプッ…お冷…誰かお冷をくれ…」'];
-  var ojiAvatarHTML = IMAGES['ojisan_' + ojiLevel] ? '<img src="' + IMAGES['ojisan_' + ojiLevel] + '" style="width:100%;height:100%;object-fit:cover;">' : ojiEmojis[ojiLevel];
+  var ojiSerifs = [
+    '「若いんだからもっと食えよ〜」',
+    '「お、おい…もう網の上に置くなよ…？」',
+    '’ウプッ…お冷…誰かお冷をくれ……’
+  ];
 
+  // おじさん巨大背景エリアのHTML
+  var ojiAvatarHTML = IMAGES['ojisan_' + ojiLevel] 
+    ? '<img src="' + IMAGES['ojisan_' + ojiLevel] + '" style="width:100%;height:100%;object-fit:cover;">' 
+    : ojiEmojis[ojiLevel];
+
+  // 網（グリッド）の描画
   var gridHTML = '';
   for (var i = 0; i < G.cells.length; i++) {
-    var cell = G.cells[i]; var zc = cell.r === 0 ? 'zone-opp' : cell.r === 1 ? 'zone-mid' : 'zone-self';
-    var validCells = (G.selectedAction && G.currentPlayer === PLAYER && G.phase === 'action' && !G.actionDone) ? (G.selectedAction === 'bake' ? getBakeCells() : getMoveCells(PLAYER)) : [];
-    var isSel = false; for (var j = 0; j < validCells.length; j++) { if (validCells[j] === cell) { isSel = true; break; } }
+    var cell = G.cells[i];
+    var zc = cell.r === 0 ? 'zone-opp' : cell.r === 1 ? 'zone-mid' : 'zone-self';
+    var validCells = (G.selectedAction && G.currentPlayer === PLAYER && !G.actionDone)
+      ? (G.selectedAction === 'bake' ? getBakeCells() : getMoveCells(PLAYER))
+      : [];
+    var isSel = false;
+    for (var j = 0; j < validCells.length; j++) { if (validCells[j] === cell) { isSel = true; break; } }
     var inner = '';
     if (cell.meat) {
       var imgKey = cell.meat.status === 'raw' ? 'meat_raw' : 'meat_cooked';
-      var meatContent = IMAGES[imgKey] ? '<img src="' + IMAGES[imgKey] + '" style="width:44px;height:44px;object-fit:contain;">' : (cell.meat.status === 'raw' ? '🥩' : '🍖');
-      var badge = cell.meat.status === 'raw' ? '<span class="meat-badge badge-raw">生</span>' : '<span class="meat-badge badge-cooked">焼</span>';
+      var meatContent = IMAGES[imgKey] 
+        ? '<img src="' + IMAGES[imgKey] + '" style="width:36px;height:36px;object-fit:contain;">'
+        : (cell.meat.status === 'raw' ? '🥩' : '🍖');
+      var badge = cell.meat.status === 'raw'
+        ? '<span class="meat-badge badge-raw">生肉</span>'
+        : '<span class="meat-badge badge-cooked">育った</span>';
       inner = '<div class="cell-inner"><div class="meat-icon">' + meatContent + '</div>' + badge + '</div>';
     }
     var cls = 'cell ' + zc + (isSel ? ' selectable' : '');
@@ -433,85 +497,56 @@ function render() {
     gridHTML += '<div class="' + cls + '" ' + onclick + '>' + inner + '</div>';
   }
 
-  var showBottomOverlay = false;
-  var bottomContentHTML = '';
+  var hasBake = getBakeCells().length > 0;
+  var hasMove = getMoveCells(PLAYER).length > 0;
 
-  if (G.phase === 'janken' && !G.npcThinking) {
-    showBottomOverlay = true;
-    bottomContentHTML = '<div class="bottom-title">👊 じゃんけんポン！ ✋</div>'
-      + '<div class="janken-row">'
-      + '  <button class="jbtn-huge" onclick="playJanken(0)">✊</button>'
-      + '  <button class="jbtn-huge" onclick="playJanken(1)">✌️</button>'
-      + '  <button class="jbtn-huge" onclick="playJanken(2)">✋</button>'
+  // 下部操作パネルの表示切り替え
+  var actionHTML = '';
+  if (G.npcThinking) {
+    actionHTML = '<div class="npc-thinking">👴 おじさんがトングを握りしめて脂汗を流している…</div>';
+  } else if (G.phase === 'janken') {
+    actionHTML = '<div class="action-title">出す手を選べ！ (ターン ' + G.turn + ')</div>'
+      + '<div class="janken-btns">'
+      + JK.map(function(j,i){ return '<button class="jbtn" onclick="playJanken(' + i + ')">' + j + '</button>'; }).join('')
       + '</div>';
-  } else if (G.phase === 'action' && G.currentPlayer === PLAYER && !G.selectedAction) {
-    showBottomOverlay = true;
-    var hasBake = getBakeCells().length > 0; var hasMove = getMoveCells(PLAYER).length > 0;
-    bottomContentHTML = '<div class="bottom-title">【あなたのターン】行動を選択</div>'
-      + '<div class="action-col">'
-      + '  <button class="act-btn-huge" onclick="selectAction(\'bake\')"' + (hasBake?'':' disabled') + '>🔥 肉をひっくり返す</button>'
-      + '  <button class="act-btn-huge" onclick="selectAction(\'move\')"' + (hasMove?'':' disabled') + '>👉 肉を前に進める</button>'
-      + '</div>';
-  } else if (G.phase === 'action' && G.actionDone) {
-    showBottomOverlay = true;
-    bottomContentHTML = '<div class="bottom-title">網の上の状況を確定します</div>'
-      + '<div class="action-col">'
-      + '  <button class="act-btn-huge pop-btn-submit" onclick="confirmEnd()">確定してターン終了 ➔</button>'
+  } else if (G.phase === 'action' && G.currentPlayer === PLAYER) {
+    actionHTML = '<div class="action-title">行動を選択し、対象の肉をタップ！</div>'
+      + '<div class="act-btns">'
+      + '<button class="abtn' + (G.selectedAction==='bake'?' active':'') + '" onclick="selectAction(\'bake\')"' + (hasBake?'':' disabled') + '>🔥 肉をひっくり返す</button>'
+      + '<button class="abtn' + (G.selectedAction==='move'?' active':'') + '" onclick="selectAction(\'move\')"' + (hasMove?'':' disabled') + '>👉 前に進める</button>'
+      + (G.actionDone ? '<button class="abtn abtn-submit" onclick="confirmEnd()">ターン終了 ➔</button>' : '')
       + '</div>';
   }
 
-  var showCenterOverlay = (G.phase === 'janken_result');
-  var centerContentHTML = '';
-  if (showCenterOverlay) {
-    var isDraw = G.lastJanken.result === 'あいこ！';
-    centerContentHTML = '<div class="jk-result-huge ' + G.lastJanken.classStr + '">じゃんけん' + G.lastJanken.result + '</div>'
-      + '<div class="jk-vs-detail">' + G.lastJanken.detailText + '</div>'
-      + (isDraw ? '<p style="color:#aaa; font-size:14px; animation:pulse 0.5s infinite alternate;">もう一度ぽん！</p>' 
-                : '<button class="jk-next-btn" onclick="closeJankenResult()">トングを構える ➔</button>');
-  }
-
+  // ★改善：おじさん巨大背景エリアと、スコア・ログの下部集約
   app.innerHTML = 
-    // 1. 相手ヘッダー
-    '<div class="opp-header level-' + ojiLevel + '">'
-    + '  <div class="opp-score-zone">'
-    + '    <span class="score-title-big">相手</span>'
-    + '    <div style="display:flex; align-items:baseline;">'
-    + '      <span class="score-num-big">' + G.scores[PLAYER] + '</span><span class="score-unit-big">枚</span>'
-    + '    </div>'
-    + '  </div>'
-    + '  <div class="ojisan-container">'
-    + '    <div class="ojisan-avatar-big">' + ojiAvatarHTML + '</div>'
-    + '  </div>'
+    // 上部：おじさん巨大背景
+    '<div class="ojisan-header level-' + ojiLevel + '">'
+    + '<div class="avatar-wrap"><div class="ojisan-avatar">' + ojiAvatarHTML + '</div></div>'
+    + '<div class="ojisan-serif">' + ojiSerifs[ojiLevel] + '</div>'
     + '</div>'
     
-    + '<div class="opp-comment-bar">'
-    + (G.npcThinking ? '👴「ふむ…トングの角度が重要だな…」' : ojiSerifs[ojiLevel])
+    // スコアリア（左スコア、右盤面）
+    + '<div class="scoreboard">'
+    + '<div class="score-box' + (playerActive?' active':'') + '">'
+    + '<div class="score-label">あなたの被害</div>'
+    + '<div class="score-num">' + G.scores[NPC] + ' <small>枚完食</small></div>'
     + '</div>'
-
-    // 2. 中央の焼き網（縦スペース限界拡大）
+    + '<div class="score-divider">VS</div>'
+    + '<div class="score-box' + (npcActive?' npc-active':'') + '">'
+    + '<div class="score-label">おじさんの被害</div>'
+    + '<div class="score-num">' + G.scores[PLAYER] + ' <small>枚完食</small></div>'
+    + '</div>'
+    + '</div>'
+    
+    // 網（グリッド）の最大化と上寄せ最適化
     + '<div class="grid-container">'
-    + '  <div class="grid">' + gridHTML + '</div>'
+    + '<div class="grid">' + gridHTML + '</div>'
     + '</div>'
-
-    + '<div class="mini-log">' + G.log + '</div>'
-
-    // 3. 自分ヘッダー（網の直後に上寄せ）
-    + '<div class="self-footer">'
-    + '  <span class="score-title-big">自分</span>'
-    + '  <div style="display:flex; align-items:baseline;">'
-    + '    <span class="score-num-big">' + G.scores[NPC] + '</span><span class="score-unit-big">枚</span>'
-    + '  </div>'
-    + '</div>'
-
-    // 4. 下部操作ポップアップ
-    + '<div class="bottom-overlay ' + (showBottomOverlay ? 'active' : '') + '">'
-    + '  <div class="bottom-card">' + bottomContentHTML + '</div>'
-    + '</div>'
-
-    // 5. 大画面中央じゃんけんモーダル
-    + '<div class="center-overlay ' + (showCenterOverlay ? 'active' : '') + '">'
-    + '  <div class="center-card">' + centerContentHTML + '</div>'
-    + '</div>';
+    
+    // 下部：操作とログの集約
+    + '<div class="action-panel">' + actionHTML + '</div>'
+    + '<div class="log-box">' + G.log + '</div>';
 }
 
 function renderGameOver(app) {
@@ -519,7 +554,7 @@ function renderGameOver(app) {
   var playerWon = myEaten < npcEaten; var draw = myEaten === npcEaten;
   var icon = draw ? '🤝' : (playerWon ? '🎉' : '🤮');
   var title = draw ? '割り勘（引き分け）' : (playerWon ? '大勝利！大人の意地！' : '敗北…お腹が限界突破');
-  var sub = draw ? '二人とも胃袋が等しく爆発。' : (playerWon ? 'おじさんの胃袋にトドメのカルビを叩き込んだ！今日は奢ってもらおう！' : '最後の一枚が喉を通らない…');
+  var sub = draw ? '二人とも胃袋が等しく爆発。明日から揃って愛妻弁当（ヘルシー）です。' : (playerWon ? 'おじさんの胃袋にトドメのカルビを叩き込んだ！今日は奢ってもらおう！' : '最後の一枚が喉を通らない…おじさんの不敵な笑みが視界で滲む…');
   app.innerHTML = '<div class="gameover-wrap"><div class="result-icon">' + icon + '</div><div class="result-title">' + title + '</div><div class="result-sub">' + sub + '</div><div class="result-scores"><div class="rscore-card' + (!playerWon&&!draw?' loser':'') + '"><div class="rscore-label">あなたが食べた量</div><div class="rscore-num">' + myEaten + ' 枚</div></div><div class="rscore-card' + (playerWon?' loser':'') + '"><div class="rscore-label">おじさんが食べた量</div><div class="rscore-num">' + npcEaten + ' 枚</div></div></div><button class="restart-btn" onclick="restart()">もう一軒行く（再戦）</button></div>';
 }
 
