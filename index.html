@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>限界焼肉 -タクティカル思考エディション-</title>
+<style>
+:root {
+  --color-bg: #121212;
+  --color-card: #1e1e1e;
+  --color-border: #333;
+  --color-text-main: #ffffff;
+  --color-text-sub: #aaaaaa;
+  --color-accent: #e8a020;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text-main);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex; justify-content: center; align-items: flex-start;
+  min-height: 100vh; overflow: hidden;
+}
+
+#app {
+  width: 100%; max-width: 480px; height: 100vh;
+  padding: 15px 12px; display: flex; flex-direction: column;
+  position: relative; justify-content: space-between;
+}
+
+/* ===================================================
+   NEW: シンプルなタイトル画面・ヘルプのスタイル
+   =================================================== */
+.title-screen {
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  height: 100%; text-align: center; padding: 20px;
+}
+.title-logo {
+  font-size: 48px; font-weight: 900; color: #ff3333; text-shadow: 3px 3px 0px #000, 0 0 20px rgba(232,160,32,0.6);
+  margin-bottom: 8px; letter-spacing: 2px; animation: glow 1.5s ease-in-out infinite alternate;
+}
+.title-sub { font-size: 14px; color: var(--color-text-sub); margin-bottom: 60px; font-weight: bold; }
+.title-btns { display: flex; flex-direction: column; gap: 16px; width: 80%; max-width: 260px; }
+.title-btn {
+  padding: 16px 0; border-radius: 12px; border: 2px solid #444; background: #222;
+  color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.1s;
+}
+.title-btn:active { transform: scale(0.95); }
+.title-btn.main-btn { background: var(--color-accent); color: #000; border: none; font-size: 18px; }
+
+@keyframes glow { from { text-shadow: 0 0 10px rgba(255,50,50,0.5); } to { text-shadow: 0 0 25px rgba(232,160,32,0.9); } }
+
+/* ===================================================
+   ゲーム本編：設計図再現レイアウト
+   =================================================== */
+.opp-header {
+  display: flex; align-items: flex-end; width: 100%; margin-bottom: 5px; position: relative; height: 140px;
+}
+.opp-score-zone { width: 35%; display: flex; flex-direction: column; padding-left: 10px; padding-bottom: 15px; }
+.score-title-big { font-size: 24px; font-weight: bold; line-height: 1.2; }
+.score-num-big { font-size: 64px; font-weight: 900; line-height: 1; letter-spacing: -2px; }
+.score-unit-big { font-size: 24px; font-weight: bold; margin-left: 4px; }
+.ojisan-container { width: 65%; height: 100%; display: flex; justify-content: center; align-items: flex-end; overflow: hidden; }
+.ojisan-avatar-big {
+  width: 130px; height: 130px; border-radius: 50%; background: #2a3d2a;
+  display: flex; align-items: center; justify-content: center; font-size: 72px;
+  border: 4px solid #555; transition: all 0.3s;
+}
+.level-1 .ojisan-avatar-big { background: #3d3d1a; border-color: var(--color-accent); }
+.level-2 .ojisan-avatar-big { background: #3d1a1a; border-color: #ff6060; animation: tremble 0.15s infinite; }
+
+@keyframes tremble {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  20% { transform: translate(-1px, -1px) rotate(-1deg); }
+  40% { transform: translate(-1px, 1px) rotate(1deg); }
+  60% { transform: translate(1px, -1px) rotate(0deg); }
+  80% { transform: translate(-1px, 1px) rotate(-1deg); }
+  100% { transform: translate(1px, 1px) rotate(1deg); }
+}
+
+.opp-comment-bar {
+  background: #ffffff; color: #000000; border: 3px solid #000000; border-radius: 30px;
+  padding: 6px 16px; font-size: 15px; font-weight: bold; text-align: center;
+  width: 100%; margin-bottom: 12px; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+  min-height: 39px; display: flex; align-items: center; justify-content: center;
+}
+
+/* 焼き網 */
+.grid-container { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+.grid {
+  display: grid; grid-template-rows: repeat(3, 1fr); grid-template-columns: repeat(5, 1fr);
+  gap: 6px; background: #1a1108; border-radius: 12px; padding: 10px;
+  border: 4px solid #3d2b14; aspect-ratio: 5 / 3.5; width: 100%;
+}
+.cell { border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; }
+.zone-opp  { background: #261212; border: 1px solid #4a1a1a; }
+.zone-mid  { background: #130f0a; border: 1px solid #332514; }
+.zone-self { background: #122612; border: 1px solid #1a4a1a; }
+
+.selectable {
+  outline: 4px solid var(--color-accent); outline-offset: -3px;
+  background-color: #4a3410 !important; cursor: pointer; animation: pulse 0.6s infinite alternate;
+}
+@keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.96); } }
+
+.cell-inner { display: flex; flex-direction: column; align-items: center; }
+.meat-icon { font-size: 32px; line-height: 1; }
+.meat-badge { font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 3px; margin-top: 2px; }
+.badge-raw    { background: #1a4a1a; color: #a0ffa0; }
+.badge-cooked { background: #542b00; color: #ffb050; }
+
+.self-footer { display: flex; flex-direction: column; width: 100%; padding-left: 10px; padding-top: 10px; }
+.mini-log { font-size: 12px; color: var(--color-text-sub); text-align: center; margin-bottom: 4px; min-height: 16px; }
+
+/* ===================================================
+   中央ポップアップ（モーダル）
+   =================================================== */
+.modal-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(2px); border-radius: 12px;
+  display: flex; justify-content: center; align-items: center;
+  z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+/* 盤面をじっくり見せるための「覗き見」状態用クラス */
+.modal-overlay.peek { opacity: 0.15; pointer-events: none; }
+
+.modal-card {
+  background: #222; border: 3px solid var(--color-accent); border-radius: 20px;
+  padding: 24px; width: 85%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  transform: scale(0.85); transition: transform 0.2s ease;
+}
+.modal-overlay.active .modal-card { transform: scale(1); }
+.modal-overlay.peek .modal-card { transform: scale(0.7); }
+
+.modal-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; letter-spacing: 1px; }
+
+.janken-row { display: flex; gap: 12px; justify-content: center; }
+.jbtn-huge {
+  font-size: 40px; flex: 1; height: 80px; border-radius: 14px;
+  border: 2px solid #444; background: #333; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.jbtn-huge:active { background: #555; transform: scale(0.92); }
+
+.action-col { display: flex; flex-direction: column; gap: 12px; }
+.act-btn-huge {
+  width: 100%; padding: 16px 0; border-radius: 12px; border: 2px solid #444;
+  background: #333; color: #fff; font-size: 16px; font-weight: bold; cursor: pointer;
+}
+.act-btn-huge:disabled { opacity: 0.2; }
+.act-btn-huge.selected { background: #542b00; color: #ffb050; border-color: var(--color-accent); }
+.act-btn-submit { background: var(--color-accent); color: #000; border: none; margin-top: 6px; }
+
+/* 覗き見用ミニボタン */
+.peek-guide-btn {
+  background: #444; color: #bbb; border: none; padding: 6px 12px; border-radius: 20px;
+  font-size: 11px; margin-top: 15px; cursor: pointer; width: 100%;
+}
+
+/* 盤面確認中に画面上に浮かび上がる解除ボタン */
+.unpeek-trigger {
+  position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%);
+  background: rgba(232, 160, 32, 0.95); color: #000; border: none;
+  padding: 12px 24px; font-size: 15px; font-weight: bold; border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; display: none; z-index: 110;
+}
+
+/* ゲームオーバー・ヘルプ用 */
+.gameover-wrap {
+  text-align: center; padding: 30px 15px; height: 100%; width: 100%;
+  background: var(--color-card); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+}
+.result-icon { font-size: 64px; margin-bottom: 10px; }
+.result-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+.result-sub { font-size: 14px; color: var(--color-text-sub); margin-bottom: 30px; }
+.restart-btn { width: 100%; max-width: 220px; padding: 14px 0; border-radius: 10px; background: var(--color-accent); border: none; font-size: 16px; font-weight: bold; color: #000; cursor: pointer; }
+
+.help-text { font-size: 13px; text-align: left; color: #ccc; line-height: 1.6; max-height: 260px; overflow-y: auto; margin-bottom: 15px; padding: 5px; }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<button id="unpeekBtn" class="unpeek-trigger" onclick="setPeek(false)">確認完了（ボタンを戻す）</button>
+
+<script>
+const PLAYER = 0, NPC = 1;
+const JK = ['✊','✌️','✋'];
+
+const IMAGES = { meat_raw: '', meat_cooked: '', ojisan_0: '', ojisan_1: '', ojisan_2: '' };
+var G = {};
+
+function initGame() {
+  var cells = [];
+  for (var r = 0; r < 3; r++) {
+    for (var c = 0; c < 5; c++) {
+      cells.push({ r: r, c: c, meat: (r === 1) ? { status: 'raw' } : null });
+    }
+  }
+  G = {
+    screen: 'title', // title, play, gameover
+    phase: 'janken', currentPlayer: PLAYER, actionDone: false, selectedAction: null,
+    scores: [0, 0], gameOver: false, log: 'いざ、限界焼肉勝負！',
+    cells: cells, turn: 1, npcThinking: false,
+    peekMode: false // 盤面覗き見フラグ
+  };
+}
+initGame();
+
+function getCell(r, c) {
+  for (var i = 0; i < G.cells.length; i++) { if (G.cells[i].r === r && G.cells[i].c === c) return G.cells[i]; }
+  return null;
+}
+function jkResult(a, b) {
+  if (a === b) return 'draw';
+  if ((a===0&&b===2)||(a===1&&b===0)||(a===2&&b===1)) return 'win';
+  return 'lose';
+}
+function canBake(cell) { return cell.meat !== null && cell.meat.status === 'raw'; }
+function canMove(cell, player) {
+  if (!cell.meat || cell.meat.status !== 'cooked') return false;
+  var dir = (player === PLAYER) ? -1 : 1;
+  var nr = cell.r + dir;
+  if (nr < 0 || nr > 2) return true;
+  return getCell(nr, cell.c).meat === null;
+}
+function getBakeCells() { return G.cells.filter(canBake); }
+function getMoveCells(player) { return G.cells.filter(function(c) { return canMove(c, player); }); }
+function remainingMeat() { return G.cells.filter(function(c) { return c.meat !== null; }).length; }
+
+function doAction(action, cell, player) {
+  var msg = '';
+  if (action === 'bake') {
+    cell.meat.status = 'cooked';
+    msg = '網の上の肉が育った！🔥';
+  } else if (action === 'move') {
+    var dir = (player === PLAYER) ? -1 : 1;
+    var nr = cell.r + dir;
+    var meatCopy = { status: cell.meat.status };
+    cell.meat = null;
+    if (nr < 0 || nr > 2) {
+      G.scores[player]++;
+      msg = (player === PLAYER) ? '🍖 おじさんの胃袋に直撃！' : '😱 あなたの皿に滑り込んできた！';
+      if (remainingMeat() === 0) { G.gameOver = true; G.screen = 'gameover'; }
+    } else {
+      var target = getCell(nr, cell.c);
+      target.meat = meatCopy;
+      msg = '肉の位置がスライドした！';
+    }
+  }
+  return msg;
+}
+
+function endTurn() {
+  G.actionDone = false; G.selectedAction = null; G.phase = 'janken'; G.turn++;
+}
+
+function npcAct() {
+  var moveCells = getMoveCells(NPC); var bakeCells = getBakeCells(); var action, cell;
+  var frontMove = moveCells.filter(function(c) { return c.r === 2; });
+  if (frontMove.length > 0) { action = 'move'; cell = frontMove[Math.floor(Math.random() * frontMove.length)]; }
+  else if (moveCells.length > 0 && Math.random() < 0.6) { action = 'move'; cell = moveCells[Math.floor(Math.random() * moveCells.length)]; }
+  else if (bakeCells.length > 0) { action = 'bake'; cell = bakeCells[Math.floor(Math.random() * bakeCells.length)]; }
+  else if (moveCells.length > 0) { action = 'move'; cell = moveCells[Math.floor(Math.random() * moveCells.length)]; }
+  else {
+    G.log = 'おじさんは満腹でパスした。'; G.npcThinking = false;
+    G.phase = 'npc_done_confirm'; // NPCが動けなかった場合の盤面確認
+    render(); return;
+  }
+
+  G.log = doAction(action, cell, NPC); G.npcThinking = false;
+  if (!G.gameOver) {
+    G.phase = 'npc_done_confirm'; // NPCの移動結果をじっくり確認させるフェーズへ
+  }
+  render();
+}
+
+window.playJanken = function(choice) {
+  if (G.phase !== 'janken' || G.npcThinking) return;
+  var npc = Math.floor(Math.random() * 3); var res = jkResult(choice, npc);
+  var ems = ['✊','✌️','✋']; var emoji = ems[choice] + ' vs ' + ems[npc];
+  if (res === 'draw') { G.log = emoji + ' あいこ！もう一度！'; render(); return; }
+  
+  if (res === 'win') {
+    G.currentPlayer = PLAYER; G.log = emoji + ' あなたの勝ち！'; 
+    G.phase = 'janken_win_confirm'; // ★勝った盤面状況をまず確認させる
+  } else {
+    G.currentPlayer = NPC; G.log = emoji + ' おじさんの勝ち…';
+    G.phase = 'janken_lose_confirm'; // ★負けた盤面状況をまず確認させる
+  }
+  render();
+};
+
+// 確認フェーズを抜けて次に進む処理
+window.proceedFromConfirm = function() {
+  setPeek(false);
+  if (G.phase === 'janken_win_confirm') {
+    G.phase = 'action';
+  } else if (G.phase === 'janken_lose_confirm') {
+    G.phase = 'action'; G.npcThinking = true; render();
+    setTimeout(npcAct, 1000);
+  } else if (G.phase === 'npc_done_confirm') {
+    endTurn(); G.log = '次のターンへ。';
+  }
+  render();
+};
+
+window.selectAction = function(action) {
+  if (G.actionDone || G.currentPlayer !== PLAYER) return;
+  G.selectedAction = action; render();
+};
+
+window.cellClick = function(r, c) {
+  if (G.phase !== 'action' || G.actionDone || !G.selectedAction || G.currentPlayer !== PLAYER) return;
+  var cell = getCell(r, c); if (!cell) return;
+  var valid = (G.selectedAction === 'bake') ? getBakeCells() : getMoveCells(PLAYER);
+  var found = false; for (var i = 0; i < valid.length; i++) { if (valid[i] === cell) { found = true; break; } }
+  if (!found) return;
+  G.log = doAction(G.selectedAction, cell, PLAYER); G.actionDone = true;
+  G.phase = 'confirm'; // 自分の行動後の確認
+  render();
+};
+
+window.confirmEnd = function() {
+  endTurn(); G.log = 'ターン' + G.turn + ' — じゃんけんをしよう！'; render();
+};
+
+// ポップアップを一時的に透明化して盤面を覗き見するシステム
+window.setPeek = function(isPeek) {
+  G.peekMode = isPeek;
+  var overlay = document.getElementById('modalOverlay');
+  var unpeekBtn = document.getElementById('unpeekBtn');
+  if (overlay) {
+    if (isPeek) { overlay.classList.add('peek'); unpeekBtn.style.display = 'block'; }
+    else { overlay.classList.remove('peek'); unpeekBtn.style.display = 'none'; }
+  }
+};
+
+window.changeScreen = function(screenName) { G.screen = screenName; render(); };
+window.showHelp = function() {
+  G.phase = 'help'; render();
+};
+window.closeHelp = function() {
+  G.phase = 'janken'; G.screen = 'title'; render();
+};
+window.restart = function() { initGame(); G.screen = 'play'; render(); };
+
+function render() {
+  var app = document.getElementById('app');
+
+  // 1. タイトル画面
+  if (G.screen === 'title') {
+    if (G.phase === 'help') {
+      app.innerHTML = '<div class="gameover-wrap"><div class="result-title" style="color:var(--color-accent)">限界焼肉のルール</div><div class="help-text"><b>【どんなゲーム？】</b><br>じゃんけんに勝ってアクションを起こし、中央の網の上にある肉を相手の皿に押し付け合う限界突破の満腹バトルゲームです！<br><br><b>【勝利条件】</b><br>網の上の肉がすべてなくなった時、<b>食べた枚数が「少ない」ほうの勝ち</b>です（相手に多く食わせたら勝ち）。<br><br><b>【ゲームの流れ】</b><br>1. 画面中央のポップアップでじゃんけんをします。<br>2. 勝った側がアクション（肉を育てる/進める）を選択します。<br>3. <b>「肉をひっくり返す（焼く）」</b>：生の肉(🥩)を焼き肉(🍖)へ進化させます。動かすにはまず焼く必要があります。<br>4. <b>「肉を前に進める」</b>：焼けた肉(🍖)を相手側へ1マス押し出します。一番奥まで押し込むと相手が強制的に完食（得点）！<br>5. 網の上の肉がすべて消えるまでターンを繰り返します。</div><button class="title-btn" style="width:80%" onclick="closeHelp()">タイトルへ戻る</button></div>';
+    } else {
+      app.innerHTML = '<div class="title-screen"><div class="title-logo">限界焼肉</div><div class="title-sub">〜 奢りを賭けたトング捌き 〜</div><div class="title-btns"><button class="title-btn main-btn" onclick="changeScreen(\'play\')">ゲーム開始</button><button class="title-btn" onclick="showHelp()">遊び方</button></div></div>';
+    }
+    return;
+  }
+
+  // 2. ゲームオーバー画面
+  if (G.screen === 'gameover') { renderGameOver(app); return; }
+
+  // 3. プレイ画面（設計図ベース）
+  var npcEaten = G.scores[PLAYER];
+  var ojiLevel = npcEaten >= 4 ? 2 : (npcEaten >= 2 ? 1 : 0);
+  var ojiEmojis = ['👴', '😰', '😱'];
+  var ojiSerifs = ['「若いんだからもっと食えよ〜」', '「おいおい…もう網の上に置くなよ？」', '「ウプッ…お冷…誰かお冷をくれ…」'];
+  var ojiAvatarHTML = IMAGES['ojisan_' + ojiLevel] ? '<img src="' + IMAGES['ojisan_' + ojiLevel] + '" style="width:100%;height:100%;object-fit:cover;">' : ojiEmojis[ojiLevel];
+
+  // 網（グリッド）の描画
+  var gridHTML = '';
+  for (var i = 0; i < G.cells.length; i++) {
+    var cell = G.cells[i]; var zc = cell.r === 0 ? 'zone-opp' : cell.r === 1 ? 'zone-mid' : 'zone-self';
+    var validCells = (G.selectedAction && G.currentPlayer === PLAYER && G.phase === 'action' && !G.actionDone) ? (G.selectedAction === 'bake' ? getBakeCells() : getMoveCells(PLAYER)) : [];
+    var isSel = false; for (var j = 0; j < validCells.length; j++) { if (validCells[j] === cell) { isSel = true; break; } }
+    var inner = '';
+    if (cell.meat) {
+      var imgKey = cell.meat.status === 'raw' ? 'meat_raw' : 'meat_cooked';
+      var meatContent = IMAGES[imgKey] ? '<img src="' + IMAGES[imgKey] + '" style="width:40px;height:40px;object-fit:contain;">' : (cell.meat.status === 'raw' ? '🥩' : '🍖');
+      var badge = cell.meat.status === 'raw' ? '<span class="meat-badge badge-raw">生</span>' : '<span class="meat-badge badge-cooked">焼</span>';
+      inner = '<div class="cell-inner"><div class="meat-icon">' + meatContent + '</div>' + badge + '</div>';
+    }
+    var cls = 'cell ' + zc + (isSel ? ' selectable' : '');
+    var onclick = isSel ? 'onclick="cellClick(' + cell.r + ',' + cell.c + ')"' : '';
+    gridHTML += '<div class="' + cls + '" ' + onclick + '>' + inner + '</div>';
+  }
+
+  // モーダル（ポップアップ）制御の判定
+  var showOverlay = false;
+  var overlayContentHTML = '';
+
+  if (G.phase === 'janken' && !G.npcThinking) {
+    showOverlay = true;
+    overlayContentHTML = '<div class="modal-title">👊 じゃんけんポン！ ✋</div>'
+      + '<div class="janken-row">'
+      + '  <button class="jbtn-huge" onclick="playJanken(0)">✊</button>'
+      + '  <button class="jbtn-huge" onclick="playJanken(1)">✌️</button>'
+      + '  <button class="jbtn-huge" onclick="playJanken(2)">✋</button>'
+      + '</div>';
+  } 
+  // NEW: じゃんけん結果確認フェーズ（長考を可能にする）
+  else if (G.phase === 'janken_win_confirm') {
+    showOverlay = true;
+    overlayContentHTML = '<div class="modal-title" style="color:var(--color-accent)">★ じゃんけんに勝利！</div>'
+      + '<p style="font-size:14px; margin-bottom:15px;">現在の網を確認して戦略を立てましょう。</p>'
+      + '<div class="action-col">'
+      + '  <button class="act-btn-huge" onclick="proceedFromConfirm()">網の状況を確認した ➔</button>'
+      + '</div>'
+      + '<button class="peek-guide-btn" onclick="setPeek(true)">💡 一時的にポップアップを隠して網を見る</button>';
+  } else if (G.phase === 'janken_lose_confirm') {
+    showOverlay = true;
+    overlayContentHTML = '<div class="modal-title" style="color:#ff6060">☠ じゃんけんに敗北…</div>'
+      + '<p style="font-size:14px; margin-bottom:15px;">おじさんのターンが始まります。</p>'
+      + '<div class="action-col">'
+      + '  <button class="act-btn-huge" onclick="proceedFromConfirm()">覚悟を決めて進める ➔</button>'
+      + '</div>'
+      + '<button class="peek-guide-btn" onclick="setPeek(true)">💡 一時的にポップアップを隠して網を見る</button>';
+  }
+  // 行動選択
+  else if (G.phase === 'action' && G.currentPlayer === PLAYER && !G.selectedAction) {
+    showOverlay = true;
+    var hasBake = getBakeCells().length > 0; var hasMove = getMoveCells(PLAYER).length > 0;
+    overlayContentHTML = '<div class="modal-title">【あなたのターン】行動の選択</div>'
+      + '<div class="action-col">'
+      + '  <button class="act-btn-huge" onclick="selectAction(\'bake\')"' + (hasBake?'':' disabled') + '>🔥 肉をひっくり返す</button>'
+      + '  <button class="act-btn-huge" onclick="selectAction(\'move\')"' + (hasMove?'':' disabled') + '>👉 肉を前に進める</button>'
+      + '</div>'
+      + '<button class="peek-guide-btn" onclick="setPeek(true)">💡 一時的にポップアップを隠して網を見る</button>';
+  } 
+  // 自分の行動後確認
+  else if (G.phase === 'confirm' && G.actionDone) {
+    showOverlay = true;
+    overlayContentHTML = '<div class="modal-title">網の上の状況を確定します</div>'
+      + '<div class="action-col">'
+      + '  <button class="act-btn-huge pop-btn-submit" onclick="confirmEnd()">次のターンへ ➔</button>'
+      + '</div>';
+  } 
+  // NEW: NPC行動後の結果確認フェーズ
+  else if (G.phase === 'npc_done_confirm') {
+    showOverlay = true;
+    overlayContentHTML = '<div class="modal-title">👴 おじさんの行動が終了</div>'
+      + '<p style="font-size:14px; margin-bottom:15px;">おじさんが網の肉を動かしました。</p>'
+      + '<div class="action-col">'
+      + '  <button class="act-btn-huge" onclick="proceedFromConfirm()">網の状況を確認した ➔</button>'
+      + '</div>'
+      + '<button class="peek-guide-btn" onclick="setPeek(true)">💡 一時的にポップアップを隠して網を見る</button>';
+  }
+
+  // アプリ全体の組み立て
+  app.innerHTML = 
+    // 1. 相手のヘッダー情報
+    '<div class="opp-header level-' + ojiLevel + '">'
+    + '  <div class="opp-score-zone">'
+    + '    <span class="score-title-big">相手</span>'
+    + '    <div style="display:flex; align-items:baseline;">'
+    + '      <span class="score-num-big">' + G.scores[PLAYER] + '</span><span class="score-unit-big">枚</span>'
+    + '    </div>'
+    + '  </div>'
+    + '  <div class="ojisan-container">'
+    + '    <div class="ojisan-avatar-big">' + ojiAvatarHTML + '</div>'
+    + '  </div>'
+    + '</div>'
+    
+    + '<div class="opp-comment-bar">'
+    + (G.npcThinking ? '👴「ふむ…トングの角度が重要だな…」' : ojiSerifs[ojiLevel])
+    + '</div>'
+
+    // 2. 中央の広大な焼き網
+    + '<div class="grid-container">'
+    + '  <div class="grid">' + gridHTML + '</div>'
+    + '</div>'
+
+    + '<div class="mini-log">' + G.log + '</div>'
+
+    // 3. 下部：自分のヘッダー情報
+    + '<div class="self-footer">'
+    + '  <span class="score-title-big">自分</span>'
+    + '  <div style="display:flex; align-items:baseline;">'
+    + '    <span class="score-num-big">' + G.scores[NPC] + '</span><span class="score-unit-big">枚</span>'
+    + '  </div>'
+    + '</div>'
+
+    // 4. ポップアップ
+    + '<div id="modalOverlay" class="modal-overlay ' + (showOverlay ? 'active' : '') + '">'
+    + '  <div class="modal-card">' + overlayContentHTML + '</div>'
+    + '</div>';
+
+  // 覗き見状態を維持
+  if (G.peekMode && showOverlay) {
+    document.getElementById('modalOverlay').classList.add('peek');
+    document.getElementById('unpeekBtn').style.display = 'block';
+  }
+}
+
+function renderGameOver(app) {
+  var myEaten = G.scores[NPC]; var npcEaten = G.scores[PLAYER];
+  var playerWon = myEaten < npcEaten; var draw = myEaten === npcEaten;
+  var icon = draw ? '🤝' : (playerWon ? '🎉' : '🤮');
+  var title = draw ? '割り勘（引き分け）' : (playerWon ? '大勝利！大人の意地！' : '敗北…お腹が限界突破');
+  var sub = draw ? '二人とも胃袋が等しく爆発。' : (playerWon ? 'おじさんの胃袋にトドメのカルビを叩き込んだ！今日は奢ってもらおう！' : '最後の一枚が喉を通らない…');
+  app.innerHTML = '<div class="gameover-wrap"><div class="result-icon">' + icon + '</div><div class="result-title">' + title + '</div><div class="result-sub">' + sub + '</div><div class="result-scores"><div class="rscore-card' + (!playerWon&&!draw?' loser':'') + '"><div class="rscore-label">あなたが食べた量</div><div class="rscore-num">' + myEaten + ' 枚</div></div><div class="rscore-card' + (playerWon?' loser':'') + '"><div class="rscore-label">おじさんが食べた量</div><div class="rscore-num">' + npcEaten + ' 枚</div></div></div><button class="restart-btn" onclick="restart()">もう一軒行く（再戦）</button></div>';
+}
+
+render();
+</script>
+</body>
+</html>
