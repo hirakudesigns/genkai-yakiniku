@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>限界焼肉 -タクティカルUIエディション-</title>
+<title>限界焼肉 -パーフェクトフィット-</title>
 <style>
 :root {
   --color-bg: #121212;
@@ -19,44 +19,44 @@
 body {
   background: var(--color-bg);
   color: var(--color-text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex; justify-content: center; align-items: flex-start;
+  min-height: 100vh; overflow: hidden;
 }
 
+/* 全体を画面内に絶対収める（高さを94vhに引き締め） */
 #app {
-  width: 100%;
-  max-width: 480px; /* スマホ幅に最適化 */
-  height: 96vh;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  width: 100%; max-width: 440px; height: 94vh; margin-top: 1vh;
+  padding: 4px 8px; display: flex; flex-direction: column;
+  position: relative; justify-content: flex-start; gap: 6px;
 }
 
-/* ★おじさんの天地はそのままで維持 */
-.ojisan-header {
-  display: flex; flex-direction: column; align-items: center; text-align: center;
-  background: var(--color-card); border-radius: 12px; border: 1px solid var(--color-border);
-  padding: 10px; position: relative;
-  flex: 0 0 auto; /* 天地を固定 */
-  height: 200px; /* 具体的な高さを指定 */
+/* ===================================================
+   ★おじさんエリア：天地（200px固定）を完全維持
+   =================================================== */
+.ojisan-container {
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  border-radius: 12px; padding: 8px; position: relative; transition: all 0.3s;
+  flex: 0 0 200px; height: 200px; /* 天地を200pxで完全固定 */
 }
-.ojisan-avatar {
-  width: 100px; height: 100px;
-  border-radius: 50%; background: #2a3d2a;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 52px; border: 3px solid #555; overflow: hidden;
-  transition: all 0.3s;
+.ojisan-container.level-0 { background: radial-gradient(circle, #223a22 0%, #121a12 100%); border: 1px solid #335533; }
+.ojisan-container.level-1 { background: radial-gradient(circle, #3a3a22 0%, #1a1a12 100%); border: 1px solid var(--color-accent); }
+.ojisan-container.level-2 { background: radial-gradient(circle, #3a2222 0%, #1a1212 100%); border: 1px solid #ff6060; animation: tremble-bg 0.2s infinite; }
+
+.ojisan-graphic-wrap {
+  height: 110px; display: flex; align-items: flex-end; justify-content: center;
+  position: relative; width: 100%; bottom: -4px;
 }
-.level-1 .ojisan-avatar { background: #3d3d1a; border-color: var(--color-accent); }
-.level-2 .ojisan-avatar { background: #3d1a1a; border-color: #ff6060; animation: tremble 0.15s infinite; }
+.ojisan-character {
+  font-size: 80px; line-height: 1; transition: all 0.2s;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+}
+.level-2 .ojisan-character { animation: tremble 0.15s infinite; }
+
 .ojisan-serif {
-  font-size: 13px; font-weight: bold; color: var(--color-accent); margin-top: 6px;
-  min-height: 18px;
+  font-size: 13px; font-weight: bold; color: #fff; text-align: center;
+  background: rgba(0,0,0,0.65); padding: 5px 10px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1); width: 95%; position: absolute; top: 12px; z-index: 5;
 }
 
 @keyframes tremble {
@@ -67,140 +67,111 @@ body {
   80% { transform: translate(-1px, 1px) rotate(-1deg); }
   100% { transform: translate(1px, 1px) rotate(1deg); }
 }
-
-/* ★これ以外の天地を縮小 */
-/* メインゲームエリア（左スコア、右盤面） */
-.main-game-area {
-  display: flex; flex: 1; gap: 8px; min-height: 0;
-  height: calc(100% - 200px - 60px - 40px); /* 全体からおじさん、ログ、アクションパネルの高さを引いた残り */
+@keyframes tremble-bg {
+  0% { filter: brightness(1); } 50% { filter: brightness(1.1); } 100% { filter: brightness(1); }
 }
 
-/* 左側：縦積みスコア＆じゃんけんスペース */
-.sidebar-left {
-  width: 85px; display: flex; flex-direction: column;
+/* ===================================================
+   ★これ以下のエリア：全体の天地を10%程度縮小・最適化
+   =================================================== */
+/* メイン対戦エリア */
+.battle-arena {
+  display: flex; flex: 1; gap: 6px; min-height: 0;
+}
+
+/* 左側：縦積みスコア（余白を詰めてコンパクトに） */
+.sidebar-scores {
+  width: 74px; display: flex; flex-direction: column; justify-content: space-between;
   background: var(--color-card); border-radius: 12px; border: 1px solid var(--color-border);
-  padding: 8px 4px; justify-content: space-between; align-items: center;
-  position: relative;
-  height: 100%;
+  padding: 6px 2px; flex-shrink: 0;
 }
-.side-score { text-align: center; width: 100%; }
-.side-score.opp { color: #ff6060; }
-.side-score.self { color: #60a0ff; }
-.side-label { font-size: 10px; color: var(--color-text-sub); }
-.side-num { font-size: 22px; font-weight: bold; }
-.side-num small { font-size: 10px; }
+.side-score-box { text-align: center; width: 100%; }
+.side-score-box.opp { color: #ff6060; border-bottom: 1px dashed #333; padding-bottom: 4px; }
+.side-score-box.self { color: #5c9eff; border-top: 1px dashed #333; padding-top: 4px; }
+.side-label { font-size: 9px; color: var(--color-text-sub); font-weight: bold; line-height: 1.2; margin-bottom: 2px; }
+.side-num { font-size: 20px; font-weight: 900; }
+.side-num small { font-size: 9px; font-weight: normal; color: var(--color-text-sub); }
+.vs-sign { font-size: 9px; color: #444; font-weight: bold; text-align: center; margin: auto 0; }
 
-/* じゃんけん中央アクティブエリア（ルーレット風） */
-.janken-center-zone {
-  width: 72px; height: 130px; display: flex; flex-direction: column;
-  justify-content: center; align-items: center; gap: 6px;
-  position: relative; perspective: 100px;
-}
-.jbtn-mini {
-  width: 50px; height: 36px; font-size: 20px;
-  border-radius: 8px; border: 1px solid var(--color-border);
-  background: #2a2a2a; color: #fff; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-}
-/* じゃんけん時以外は半透明で触れなくする（煩わしさ解消） */
-.janken-center-zone.inactive {
-  opacity: 0.15; pointer-events: none; filter: grayscale(1);
-}
-/* じゃんけんアクティブ時のルーレット風アニメ効果 */
-.janken-center-zone.active .jbtn-mini {
-  animation: rouletteUpDown 2s infinite ease-in-out;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 8px rgba(232, 160, 32, 0.3);
-}
-.janken-center-zone.active .jbtn-mini:nth-child(2) { animation-delay: 0.3s; }
-.janken-center-zone.active .jbtn-mini:nth-child(3) { animation-delay: 0.6s; }
-
-@keyframes rouletteUpDown {
-  0%, 100% { transform: translateZ(0); }
-  50% { transform: translateZ(5px) scale(1.05); background: #3a3a3a; }
-}
-
-/* 右側：盤面を最大限広く確保 */
+/* 右側：網（高さを引き締め） */
 .grid-container {
-  flex: 1; display: flex; flex-direction: column;
-  height: 100%;
+  flex: 1; display: flex; flex-direction: column; min-height: 0;
 }
 .grid {
   flex: 1; display: grid; grid-template-rows: repeat(3, 1fr); grid-template-columns: repeat(5, 1fr);
-  gap: 5px; background: #1a1108; border-radius: 12px; padding: 8px;
-  border: 3px solid #3d2b14; touch-action: manipulation;
+  gap: 4px; border-radius: 12px; padding: 4px;
+  background: 
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+    #18120c;
+  background-size: 20% 33.3%, 20% 33.3%;
+  border: 3px solid #42301c;
+  box-shadow: inset 0 0 15px #000;
+  touch-action: manipulation;
 }
+
 .cell {
   border-radius: 6px; display: flex; align-items: center; justify-content: center;
   position: relative; transition: background-color 0.2s;
 }
-.zone-opp  { background: #261212; border: 1px solid #4a1a1a; }
-.zone-mid  { background: #130f0a; border: 1px solid #332514; }
-.zone-self { background: #122612; border: 1px solid #1a4a1a; }
+.zone-opp  { background: rgba(60, 25, 25, 0.4); border: 1px solid #4a1f1f; }
+.zone-mid  { background: rgba(30, 25, 20, 0.4); border: 1px solid #382a1d; }
+.zone-self { background: rgba(25, 60, 25, 0.4); border: 1px solid #1f4a1f; }
 
 .selectable {
-  outline: 3px solid var(--color-accent); outline-offset: -3px;
-  background-color: #4a3410 !important; cursor: pointer;
-  animation: pulse 0.8s infinite alternate;
+  outline: 3px solid var(--color-accent); outline-offset: -2px;
+  background-color: #523910 !important; cursor: pointer;
+  animation: pulse 0.6s infinite alternate; z-index: 5;
 }
-@keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.97); } }
+@keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.96); } }
 
-.cell-inner { display: flex; flex-direction: column; align-items: center; }
-.meat-icon { font-size: 26px; line-height: 1; }
-.meat-badge { font-size: 8px; font-weight: bold; padding: 1px 3px; border-radius: 3px; margin-top: 1px; }
-.badge-raw    { background: #1a4a1a; color: #a0ffa0; }
-.badge-cooked { background: #542b00; color: #ffb050; }
+.cell-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; }
+.meat-icon { font-size: 24px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+.meat-badge { 
+  font-size: 8px; font-weight: 900; padding: 1px 3px; border-radius: 3px; 
+  margin-top: 1px; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.badge-raw    { background: #1a521a; color: #a0ffa0; border: 1px solid #2d7a2d; }
+.badge-cooked { background: #663300; color: #ffb050; border: 1px solid #8c4600; }
 
-/* 下部操作パネル（天地を縮小） */
+/* 下部操作パネル（天地高さをスリムに制限） */
 .action-panel {
-  background: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 8px; /* 天地を縮小 */
-  flex: 0 0 auto;
-  height: 40px; /* 具体的な高さを指定 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: var(--color-card); border: 1px solid var(--color-border);
+  border-radius: 12px; padding: 6px 8px; flex-shrink: 0; min-height: 74px;
 }
-.action-title { font-size: 11px; color: var(--color-text-sub); text-align: center; margin-bottom: 0px; }
+.action-title { font-size: 11px; color: var(--color-text-sub); text-align: center; margin-bottom: 4px; font-weight: bold; }
 
-.janken-btns { display: flex; gap: 8px; justify-content: center; height: 100%; align-items: center;}
+.janken-btns { display: flex; gap: 8px; justify-content: center; }
 .jbtn {
-  font-size: 28px; flex: 1; max-width: 70px; height: 100%;
-  border-radius: 8px; border: 2px solid #444;
-  background: #2a2a2a; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 3px 0 #111;
+  font-size: 24px; flex: 1; max-width: 80px; height: 42px;
+  border-radius: 10px; border: 2px solid #444; background: #2a2a2a; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 0 #111;
 }
 .jbtn:active { background: #444; transform: translateY(2px); box-shadow: none; }
 
-.act-btns { display: flex; gap: 6px; justify-content: center; width: 100%; height: 100%; align-items: center; }
+.act-btns { display: flex; gap: 6px; justify-content: center; width: 100%; }
 .abtn {
-  flex: 1; padding: 10px 0; border-radius: 8px;
+  flex: 1; height: 42px; border-radius: 8px;
   border: 1px solid var(--color-border); background: #2a2a2a;
   font-size: 12px; font-weight: bold; color: var(--color-text-main); cursor: pointer;
-  height: 100%; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 3px 0 #111;
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 0 #111;
 }
 .abtn:disabled { opacity: 0.15; box-shadow: none; cursor: not-allowed; }
 .abtn.active { background: #542b00; color: #ffb050; border-color: var(--color-accent); }
-.abtn-submit { background: var(--color-accent); color: #000; border: none; font-size: 12px; box-shadow: 0 3px 0 #a67010; }
+.abtn-submit { background: var(--color-accent); color: #000; border: none; box-shadow: 0 3px 0 #a67010; }
 .abtn:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
 
-/* ログボックスの高さをスリムに */
+/* ログボックスの天地を薄く調整 */
 .log-box {
   font-size: 12px; color: var(--color-text-sub); font-weight: bold;
-  min-height: 36px; text-align: center; padding: 4px 10px;
-  background: var(--color-card); border-radius: 10px;
+  min-height: 32px; height: 32px; text-align: center; padding: 0 10px;
+  background: var(--color-card); border-radius: 8px;
   border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center;
-  flex: 0 0 auto;
-  height: 60px; /* 具体的な高さを指定 */
+  flex-shrink: 0;
 }
-.npc-thinking { color: #ff6060; animation: pulse 0.5s infinite alternate; font-size: 12px; }
+.npc-thinking { color: #ff6060; }
 
-/* じゃんけん・結果の中央透過モーダル構造 */
+/* じゃんけん結果用・中央モーダル */
 .modal-overlay {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.65); backdrop-filter: blur(2px); border-radius: 12px;
@@ -218,28 +189,27 @@ body {
 .modal-res-title { font-size: 18px; font-weight: bold; margin-bottom: 8px; }
 .modal-res-body { font-size: 13px; color: var(--color-text-sub); margin-bottom: 12px; }
 
-/* タイトル画面 */
+/* タイトル・ゲームオーバー画面 */
 .title-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center; padding: 20px; }
-.title-logo { font-size: 48px; font-weight: 900; color: #ff3333; text-shadow: 3px 3px 0px #000, 0 0 20px rgba(232,160,32,0.6); margin-bottom: 6px; letter-spacing: 4px; animation: glow 1.5s ease-in-out infinite alternate; }
-.title-sub { font-size: 13px; color: var(--color-text-sub); margin-bottom: 40px; font-weight: bold; }
-.title-btns { display: flex; flex-direction: column; gap: 14px; width: 80%; max-width: 240px; }
-.title-btn { padding: 14px 0; border-radius: 12px; border: 2px solid #444; background: #222; color: #fff; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #111; }
+.title-logo { font-size: 44px; font-weight: 900; color: #ff3333; text-shadow: 3px 3px 0px #000, 0 0 20px rgba(232,160,32,0.6); margin-bottom: 6px; letter-spacing: 4px; animation: glow 1.5s ease-in-out infinite alternate; }
+.title-sub { font-size: 12px; color: var(--color-text-sub); margin-bottom: 30px; font-weight: bold; }
+.title-btns { display: flex; flex-direction: column; gap: 12px; width: 80%; max-width: 220px; }
+.title-btn { padding: 12px 0; border-radius: 12px; border: 2px solid #444; background: #222; color: #fff; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #111; }
 .title-btn:active { transform: translateY(2px); box-shadow: none; }
-.title-btn.main-btn { background: var(--color-accent); color: #000; border: none; font-size: 17px; box-shadow: 0 4px 0 #a67010; }
+.title-btn.main-btn { background: var(--color-accent); color: #000; border: none; font-size: 16px; box-shadow: 0 4px 0 #a67010; }
 @keyframes glow { from { text-shadow: 0 0 10px rgba(255,50,50,0.5), 3px 3px 0px #000; } to { text-shadow: 0 0 25px rgba(232,160,32,0.9), 3px 3px 0px #000; } }
 
-/* ゲームオーバー画面 */
-.gameover-wrap { text-align: center; padding: 20px 10px; height: 100%; width: 100%; background: var(--color-card); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-.result-icon { font-size: 54px; margin-bottom: 8px; }
-.result-title { font-size: 22px; font-weight: bold; margin-bottom: 4px; }
-.result-sub { font-size: 12px; color: var(--color-text-sub); margin-bottom: 20px; padding: 0 10px; }
-.result-scores { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; width: 100%; }
-.rscore-card { padding: 10px; border-radius: 8px; border: 1px solid var(--color-border); background: #252525; flex: 1; }
+.gameover-wrap { text-align: center; padding: 16px 10px; height: 100%; width: 100%; background: var(--color-card); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.result-icon { font-size: 48px; margin-bottom: 6px; }
+.result-title { font-size: 20px; font-weight: bold; margin-bottom: 4px; }
+.result-sub { font-size: 12px; color: var(--color-text-sub); margin-bottom: 16px; padding: 0 10px; }
+.result-scores { display: flex; gap: 10px; justify-content: center; margin-bottom: 16px; width: 100%; }
+.rscore-card { padding: 8px; border-radius: 8px; border: 1px solid var(--color-border); background: #252525; flex: 1; }
 .rscore-card.loser { border: 2px solid #ff6060; background: #331515; }
 .rscore-label { font-size: 10px; color: var(--color-text-sub); margin-bottom: 2px; }
-.rscore-num { font-size: 20px; font-weight: bold; }
-.restart-btn { width: 100%; max-width: 180px; padding: 12px 0; border-radius: 10px; background: var(--color-accent); border: none; font-size: 15px; font-weight: bold; color: #000; cursor: pointer; }
-.help-text { font-size: 12px; text-align: left; color: #ccc; line-height: 1.5; max-height: 200px; overflow-y: auto; margin-bottom: 16px; padding: 8px; background: #151515; border-radius: 8px; }
+.rscore-num { font-size: 18px; font-weight: bold; }
+.restart-btn { width: 100%; max-width: 160px; padding: 10px 0; border-radius: 10px; background: var(--color-accent); border: none; font-size: 14px; font-weight: bold; color: #000; cursor: pointer; }
+.help-text { font-size: 11px; text-align: left; color: #ccc; line-height: 1.4; max-height: 180px; overflow-y: auto; margin-bottom: 14px; padding: 8px; background: #151515; border-radius: 8px; }
 </style>
 </head>
 <body>
@@ -251,7 +221,7 @@ body {
     <div id="modal-icon" class="modal-res-icon">🎉</div>
     <div id="modal-title" class="modal-res-title">じゃんけん勝利！</div>
     <div id="modal-body" class="modal-res-body">✊ vs ✌️</div>
-    <button class="abtn abtn-submit" style="width:100%; max-width:130px; margin:0 auto;" onclick="closeModal()">進む</button>
+    <button class="abtn abtn-submit" style="width:100%; max-width:120px; margin:8px auto 0;" onclick="closeModal()">進む</button>
   </div>
 </div>
 
@@ -259,7 +229,6 @@ body {
 const PLAYER = 0, NPC = 1;
 const JK = ['✊','✌️','✋'];
 
-const IMAGES = { meat_raw: '', meat_cooked: '', ojisan_0: '', ojisan_1: '', ojisan_2: '' };
 var G = {};
 
 function initGame() {
