@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>限界焼肉 -タクティカル思考エディション-</title>
+<title>限界焼肉 -演出強化エディション-</title>
 <style>
 :root {
   --color-bg: #121212;
@@ -31,7 +31,7 @@ body {
 }
 
 /* ===================================================
-   NEW: シンプルなタイトル画面・ヘルプのスタイル
+   タイトル画面
    =================================================== */
 .title-screen {
   display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -105,36 +105,43 @@ body {
 }
 @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.96); } }
 
-.cell-inner { display: flex; flex-direction: column; align-items: center; }
+/* お肉の登場用アニメーション */
+.cell-inner {
+  display: flex; flex-direction: column; align-items: center;
+  animation: meatPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
 .meat-icon { font-size: 32px; line-height: 1; }
 .meat-badge { font-size: 9px; font-weight: bold; padding: 1px 4px; border-radius: 3px; margin-top: 2px; }
 .badge-raw    { background: #1a4a1a; color: #a0ffa0; }
 .badge-cooked { background: #542b00; color: #ffb050; }
 
+@keyframes meatPopIn {
+  0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
 .self-footer { display: flex; flex-direction: column; width: 100%; padding-left: 10px; padding-top: 10px; }
 .mini-log { font-size: 12px; color: var(--color-text-sub); text-align: center; margin-bottom: 4px; min-height: 16px; }
 
 /* ===================================================
-   中央ポップアップ（モーダル）
+   中央ポップアップ（モーダル）：後ろの盤面が見えるように透過
    =================================================== */
 .modal-overlay {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.75); backdrop-filter: blur(2px); border-radius: 12px;
+  background: rgba(0,0,0,0.5); /* 透過度を下げて後ろの盤面を常に見えやすく */
+  backdrop-filter: blur(1px); border-radius: 12px;
   display: flex; justify-content: center; align-items: center;
   z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
 }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
-/* 盤面をじっくり見せるための「覗き見」状態用クラス */
-.modal-overlay.peek { opacity: 0.15; pointer-events: none; }
-
 .modal-card {
-  background: #222; border: 3px solid var(--color-accent); border-radius: 20px;
+  background: rgba(34, 34, 34, 0.92); /* カード自体もうっすら透過させて盤面の邪魔を減らす */
+  border: 3px solid var(--color-accent); border-radius: 20px;
   padding: 24px; width: 85%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
   transform: scale(0.85); transition: transform 0.2s ease;
 }
 .modal-overlay.active .modal-card { transform: scale(1); }
-.modal-overlay.peek .modal-card { transform: scale(0.7); }
 
 .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; letter-spacing: 1px; }
 
@@ -155,20 +162,6 @@ body {
 .act-btn-huge.selected { background: #542b00; color: #ffb050; border-color: var(--color-accent); }
 .act-btn-submit { background: var(--color-accent); color: #000; border: none; margin-top: 6px; }
 
-/* 覗き見用ミニボタン */
-.peek-guide-btn {
-  background: #444; color: #bbb; border: none; padding: 6px 12px; border-radius: 20px;
-  font-size: 11px; margin-top: 15px; cursor: pointer; width: 100%;
-}
-
-/* 盤面確認中に画面上に浮かび上がる解除ボタン */
-.unpeek-trigger {
-  position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%);
-  background: rgba(232, 160, 32, 0.95); color: #000; border: none;
-  padding: 12px 24px; font-size: 15px; font-weight: bold; border-radius: 30px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; display: none; z-index: 110;
-}
-
 /* ゲームオーバー・ヘルプ用 */
 .gameover-wrap {
   text-align: center; padding: 30px 15px; height: 100%; width: 100%;
@@ -185,7 +178,6 @@ body {
 <body>
 
 <div id="app"></div>
-<button id="unpeekBtn" class="unpeek-trigger" onclick="setPeek(false)">確認完了（ボタンを戻す）</button>
 
 <script>
 const PLAYER = 0, NPC = 1;
@@ -198,18 +190,49 @@ function initGame() {
   var cells = [];
   for (var r = 0; r < 3; r++) {
     for (var c = 0; c < 5; c++) {
-      cells.push({ r: r, c: c, meat: (r === 1) ? { status: 'raw' } : null });
+      // 最初はミート(肉)をnull（空っぽ）で生成し、演出アニメで1個ずつ入れる
+      cells.push({ r: r, c: c, meat: null, isAnimating: false });
     }
   }
   G = {
     screen: 'title', // title, play, gameover
-    phase: 'janken', currentPlayer: PLAYER, actionDone: false, selectedAction: null,
+    phase: 'setup',  // setup(肉並べ中), janken, action, confirm
+    currentPlayer: PLAYER, actionDone: false, selectedAction: null,
     scores: [0, 0], gameOver: false, log: 'いざ、限界焼肉勝負！',
-    cells: cells, turn: 1, npcThinking: false,
-    peekMode: false // 盤面覗き見フラグ
+    cells: cells, turn: 1, npcThinking: false
   };
 }
 initGame();
+
+// NEW: お肉を左から順番に網にセットしていく演出
+function startMeatSetupAnimation() {
+  G.phase = 'setup';
+  G.log = '店員が新鮮なお肉を運んできた…！';
+  render();
+
+  var midRowCols = [0, 1, 2, 3, 4]; // 中央列の列インデックス
+  var delay = 350; // お肉が並ぶ間隔 (ミリ秒)
+
+  midRowCols.forEach(function(colIndex, index) {
+    setTimeout(function() {
+      // 中央列 (r=1) のセルに対象の肉をセット
+      var cell = getCell(1, colIndex);
+      if (cell) {
+        cell.meat = { status: 'raw' };
+        render(); // お肉を乗せて再描画（CSSアニメが発火）
+      }
+
+      // 5個すべての肉が並び終わったら、じゃんけんフェーズに移行
+      if (index === midRowCols.length - 1) {
+        setTimeout(function() {
+          G.phase = 'janken';
+          G.log = '第' + G.turn + '回戦 — さあ、じゃんけんだ！';
+          render();
+        }, 500);
+      }
+    }, (index + 1) * delay);
+  });
+}
 
 function getCell(r, c) {
   for (var i = 0; i < G.cells.length; i++) { if (G.cells[i].r === r && G.cells[i].c === c) return G.cells[i]; }
@@ -266,16 +289,10 @@ function npcAct() {
   else if (moveCells.length > 0 && Math.random() < 0.6) { action = 'move'; cell = moveCells[Math.floor(Math.random() * moveCells.length)]; }
   else if (bakeCells.length > 0) { action = 'bake'; cell = bakeCells[Math.floor(Math.random() * bakeCells.length)]; }
   else if (moveCells.length > 0) { action = 'move'; cell = moveCells[Math.floor(Math.random() * moveCells.length)]; }
-  else {
-    G.log = 'おじさんは満腹でパスした。'; G.npcThinking = false;
-    G.phase = 'npc_done_confirm'; // NPCが動けなかった場合の盤面確認
-    render(); return;
-  }
+  else { endTurn(); G.log = 'おじさんは満腹でパスした。'; G.npcThinking = false; render(); return; }
 
   G.log = doAction(action, cell, NPC); G.npcThinking = false;
-  if (!G.gameOver) {
-    G.phase = 'npc_done_confirm'; // NPCの移動結果をじっくり確認させるフェーズへ
-  }
+  if (!G.gameOver) endTurn();
   render();
 }
 
@@ -284,29 +301,12 @@ window.playJanken = function(choice) {
   var npc = Math.floor(Math.random() * 3); var res = jkResult(choice, npc);
   var ems = ['✊','✌️','✋']; var emoji = ems[choice] + ' vs ' + ems[npc];
   if (res === 'draw') { G.log = emoji + ' あいこ！もう一度！'; render(); return; }
-  
   if (res === 'win') {
-    G.currentPlayer = PLAYER; G.log = emoji + ' あなたの勝ち！'; 
-    G.phase = 'janken_win_confirm'; // ★勝った盤面状況をまず確認させる
+    G.currentPlayer = PLAYER; G.log = emoji + ' あなたの勝ち！行動を選んでください。'; G.phase = 'action'; render();
   } else {
-    G.currentPlayer = NPC; G.log = emoji + ' おじさんの勝ち…';
-    G.phase = 'janken_lose_confirm'; // ★負けた盤面状況をまず確認させる
+    G.currentPlayer = NPC; G.log = emoji + ' おじさんの勝ち…'; G.phase = 'action'; G.npcThinking = true; render();
+    setTimeout(npcAct, 1200);
   }
-  render();
-};
-
-// 確認フェーズを抜けて次に進む処理
-window.proceedFromConfirm = function() {
-  setPeek(false);
-  if (G.phase === 'janken_win_confirm') {
-    G.phase = 'action';
-  } else if (G.phase === 'janken_lose_confirm') {
-    G.phase = 'action'; G.npcThinking = true; render();
-    setTimeout(npcAct, 1000);
-  } else if (G.phase === 'npc_done_confirm') {
-    endTurn(); G.log = '次のターンへ。';
-  }
-  render();
 };
 
 window.selectAction = function(action) {
@@ -320,34 +320,24 @@ window.cellClick = function(r, c) {
   var valid = (G.selectedAction === 'bake') ? getBakeCells() : getMoveCells(PLAYER);
   var found = false; for (var i = 0; i < valid.length; i++) { if (valid[i] === cell) { found = true; break; } }
   if (!found) return;
-  G.log = doAction(G.selectedAction, cell, PLAYER); G.actionDone = true;
-  G.phase = 'confirm'; // 自分の行動後の確認
-  render();
+  G.log = doAction(G.selectedAction, cell, PLAYER); G.actionDone = true; render();
 };
 
 window.confirmEnd = function() {
-  endTurn(); G.log = 'ターン' + G.turn + ' — じゃんけんをしよう！'; render();
+  endTurn(); G.log = '第' + G.turn + '回戦 — さあ、じゃんけんだ！'; render();
 };
 
-// ポップアップを一時的に透明化して盤面を覗き見するシステム
-window.setPeek = function(isPeek) {
-  G.peekMode = isPeek;
-  var overlay = document.getElementById('modalOverlay');
-  var unpeekBtn = document.getElementById('unpeekBtn');
-  if (overlay) {
-    if (isPeek) { overlay.classList.add('peek'); unpeekBtn.style.display = 'block'; }
-    else { overlay.classList.remove('peek'); unpeekBtn.style.display = 'none'; }
-  }
+window.clickStartGame = function() {
+  G.screen = 'play';
+  initGame(); // 初期化
+  G.screen = 'play'; // プレイ画面へ切替
+  startMeatSetupAnimation(); // アニメーション開始
 };
 
 window.changeScreen = function(screenName) { G.screen = screenName; render(); };
-window.showHelp = function() {
-  G.phase = 'help'; render();
-};
-window.closeHelp = function() {
-  G.phase = 'janken'; G.screen = 'title'; render();
-};
-window.restart = function() { initGame(); G.screen = 'play'; render(); };
+window.showHelp = function() { G.phase = 'help'; render(); };
+window.closeHelp = function() { G.phase = 'janken'; G.screen = 'title'; render(); };
+window.restart = function() { window.clickStartGame(); };
 
 function render() {
   var app = document.getElementById('app');
@@ -357,7 +347,7 @@ function render() {
     if (G.phase === 'help') {
       app.innerHTML = '<div class="gameover-wrap"><div class="result-title" style="color:var(--color-accent)">限界焼肉のルール</div><div class="help-text"><b>【どんなゲーム？】</b><br>じゃんけんに勝ってアクションを起こし、中央の網の上にある肉を相手の皿に押し付け合う限界突破の満腹バトルゲームです！<br><br><b>【勝利条件】</b><br>網の上の肉がすべてなくなった時、<b>食べた枚数が「少ない」ほうの勝ち</b>です（相手に多く食わせたら勝ち）。<br><br><b>【ゲームの流れ】</b><br>1. 画面中央のポップアップでじゃんけんをします。<br>2. 勝った側がアクション（肉を育てる/進める）を選択します。<br>3. <b>「肉をひっくり返す（焼く）」</b>：生の肉(🥩)を焼き肉(🍖)へ進化させます。動かすにはまず焼く必要があります。<br>4. <b>「肉を前に進める」</b>：焼けた肉(🍖)を相手側へ1マス押し出します。一番奥まで押し込むと相手が強制的に完食（得点）！<br>5. 網の上の肉がすべて消えるまでターンを繰り返します。</div><button class="title-btn" style="width:80%" onclick="closeHelp()">タイトルへ戻る</button></div>';
     } else {
-      app.innerHTML = '<div class="title-screen"><div class="title-logo">限界焼肉</div><div class="title-sub">〜 奢りを賭けたトング捌き 〜</div><div class="title-btns"><button class="title-btn main-btn" onclick="changeScreen(\'play\')">ゲーム開始</button><button class="title-btn" onclick="showHelp()">遊び方</button></div></div>';
+      app.innerHTML = '<div class="title-screen"><div class="title-logo">限界焼肉</div><div class="title-sub">〜 奢りを賭けたトング捌き 〜</div><div class="title-btns"><button class="title-btn main-btn" onclick="clickStartGame()">ゲーム開始</button><button class="title-btn" onclick="showHelp()">遊び方</button></div></div>';
     }
     return;
   }
@@ -365,7 +355,7 @@ function render() {
   // 2. ゲームオーバー画面
   if (G.screen === 'gameover') { renderGameOver(app); return; }
 
-  // 3. プレイ画面（設計図ベース）
+  // 3. プレイ画面
   var npcEaten = G.scores[PLAYER];
   var ojiLevel = npcEaten >= 4 ? 2 : (npcEaten >= 2 ? 1 : 0);
   var ojiEmojis = ['👴', '😰', '😱'];
@@ -394,6 +384,7 @@ function render() {
   var showOverlay = false;
   var overlayContentHTML = '';
 
+  // setup（演出中）の時は何も表示せず網だけを見せる
   if (G.phase === 'janken' && !G.npcThinking) {
     showOverlay = true;
     overlayContentHTML = '<div class="modal-title">👊 じゃんけんポン！ ✋</div>'
@@ -402,53 +393,23 @@ function render() {
       + '  <button class="jbtn-huge" onclick="playJanken(1)">✌️</button>'
       + '  <button class="jbtn-huge" onclick="playJanken(2)">✋</button>'
       + '</div>';
-  } 
-  // NEW: じゃんけん結果確認フェーズ（長考を可能にする）
-  else if (G.phase === 'janken_win_confirm') {
-    showOverlay = true;
-    overlayContentHTML = '<div class="modal-title" style="color:var(--color-accent)">★ じゃんけんに勝利！</div>'
-      + '<p style="font-size:14px; margin-bottom:15px;">現在の網を確認して戦略を立てましょう。</p>'
-      + '<div class="action-col">'
-      + '  <button class="act-btn-huge" onclick="proceedFromConfirm()">網の状況を確認した ➔</button>'
-      + '</div>'
-      + '<button class="peek-guide-btn" onclick="setPeek(true)">💡 一時的にポップアップを隠して網を見る</button>';
-  } else if (G.phase === 'janken_lose_confirm') {
-    showOverlay = true;
-    overlayContentHTML = '<div class="modal-title" style="color:#ff6060">☠ じゃんけんに敗北…</div>'
-      + '<p style="font-size:14px; margin-bottom:15px;">おじさんのターンが始まります。</p>'
-      + '<div class="action-col">'
-      + '  <button class="act-btn-huge" onclick="proceedFromConfirm()">覚悟を決めて進める ➔</button>'
-      + '</div>'
-      + '<button class="peek-guide-btn" onclick="setPeek(true)">💡 一時的にポップアップを隠して網を見る</button>';
-  }
-  // 行動選択
-  else if (G.phase === 'action' && G.currentPlayer === PLAYER && !G.selectedAction) {
+  } else if (G.phase === 'action' && G.currentPlayer === PLAYER && !G.selectedAction) {
     showOverlay = true;
     var hasBake = getBakeCells().length > 0; var hasMove = getMoveCells(PLAYER).length > 0;
     overlayContentHTML = '<div class="modal-title">【あなたのターン】行動の選択</div>'
       + '<div class="action-col">'
       + '  <button class="act-btn-huge" onclick="selectAction(\'bake\')"' + (hasBake?'':' disabled') + '>🔥 肉をひっくり返す</button>'
       + '  <button class="act-btn-huge" onclick="selectAction(\'move\')"' + (hasMove?'':' disabled') + '>👉 肉を前に進める</button>'
-      + '</div>'
-      + '<button class="peek-guide-btn" onclick="setPeek(true)">💡 一時的にポップアップを隠して網を見る</button>';
-  } 
-  // 自分の行動後確認
-  else if (G.phase === 'confirm' && G.actionDone) {
+      + '</div>';
+  } else if (G.phase === 'action' && G.currentPlayer === PLAYER && G.selectedAction && !G.actionDone) {
+    // 肉の選択中、ポップアップは自動で閉じ、網の選択ハイライトだけが生きる（やりづらさ解消）
+    showOverlay = false;
+  } else if (G.phase === 'action' && G.actionDone) {
     showOverlay = true;
     overlayContentHTML = '<div class="modal-title">網の上の状況を確定します</div>'
       + '<div class="action-col">'
-      + '  <button class="act-btn-huge pop-btn-submit" onclick="confirmEnd()">次のターンへ ➔</button>'
+      + '  <button class="act-btn-huge pop-btn-submit" onclick="confirmEnd()">確定してターン終了 ➔</button>'
       + '</div>';
-  } 
-  // NEW: NPC行動後の結果確認フェーズ
-  else if (G.phase === 'npc_done_confirm') {
-    showOverlay = true;
-    overlayContentHTML = '<div class="modal-title">👴 おじさんの行動が終了</div>'
-      + '<p style="font-size:14px; margin-bottom:15px;">おじさんが網の肉を動かしました。</p>'
-      + '<div class="action-col">'
-      + '  <button class="act-btn-huge" onclick="proceedFromConfirm()">網の状況を確認した ➔</button>'
-      + '</div>'
-      + '<button class="peek-guide-btn" onclick="setPeek(true)">💡 一時的にポップアップを隠して網を見る</button>';
   }
 
   // アプリ全体の組み立て
@@ -486,15 +447,9 @@ function render() {
     + '</div>'
 
     // 4. ポップアップ
-    + '<div id="modalOverlay" class="modal-overlay ' + (showOverlay ? 'active' : '') + '">'
+    + '<div class="modal-overlay ' + (showOverlay ? 'active' : '') + '">'
     + '  <div class="modal-card">' + overlayContentHTML + '</div>'
     + '</div>';
-
-  // 覗き見状態を維持
-  if (G.peekMode && showOverlay) {
-    document.getElementById('modalOverlay').classList.add('peek');
-    document.getElementById('unpeekBtn').style.display = 'block';
-  }
 }
 
 function renderGameOver(app) {
