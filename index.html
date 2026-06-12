@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>限界焼肉 -パーフェクトフィット-</title>
+<title>限界焼肉 -ネオンエフェクトエディション-</title>
 <style>
 :root {
   --color-bg: #121212;
@@ -24,88 +24,88 @@ body {
   min-height: 100vh; overflow: hidden;
 }
 
-/* 全体を画面内に絶対収める（高さを94vhに引き締め） */
+/* 天地を92vhに引き締め、スクロールを完全防止 */
 #app {
-  width: 100%; max-width: 440px; height: 94vh; margin-top: 1vh;
-  padding: 4px 8px; display: flex; flex-direction: column;
-  position: relative; justify-content: flex-start; gap: 6px;
+  width: 100%; max-width: 440px; height: 92vh; margin-top: 1vh;
+  padding: 6px 8px; display: flex; flex-direction: column;
+  position: relative; justify-content: flex-start; gap: 4px;
 }
 
 /* ===================================================
-   ★おじさんエリア：天地（200px固定）を完全維持
+   ★おじさん巨大イラストエリア（丸枠撤廃・バストアップ想定）
    =================================================== */
 .ojisan-container {
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-  border-radius: 12px; padding: 8px; position: relative; transition: all 0.3s;
-  flex: 0 0 200px; height: 200px; /* 天地を200pxで完全固定 */
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end; /* 下（網側）に密着させる */
+  border-radius: 12px 12px 0 0;
+  padding: 8px; height: 26vh; min-height: 150px; position: relative; transition: all 0.3s;
 }
 .ojisan-container.level-0 { background: radial-gradient(circle, #223a22 0%, #121a12 100%); border: 1px solid #335533; }
 .ojisan-container.level-1 { background: radial-gradient(circle, #3a3a22 0%, #1a1a12 100%); border: 1px solid var(--color-accent); }
 .ojisan-container.level-2 { background: radial-gradient(circle, #3a2222 0%, #1a1212 100%); border: 1px solid #ff6060; animation: tremble-bg 0.2s infinite; }
 
+/* 将来イラストを入れる枠。丸を廃止し、下部から生えるバストアップ用構造 */
 .ojisan-graphic-wrap {
   height: 110px; display: flex; align-items: flex-end; justify-content: center;
-  position: relative; width: 100%; bottom: -4px;
+  position: relative; width: 100%; bottom: -8px; /* 網の境界線に接地させる */
 }
 .ojisan-character {
-  font-size: 80px; line-height: 1; transition: all 0.2s;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+  font-size: 72px; line-height: 1; transition: all 0.2s;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
 }
 .level-2 .ojisan-character { animation: tremble 0.15s infinite; }
 
 .ojisan-serif {
   font-size: 13px; font-weight: bold; color: #fff; text-align: center;
-  background: rgba(0,0,0,0.65); padding: 5px 10px; border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.1); width: 95%; position: absolute; top: 12px; z-index: 5;
+  background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.1); width: 95%; position: absolute; top: 8px; z-index: 5;
 }
 
 @keyframes tremble {
   0% { transform: translate(1px, 1px) rotate(0deg); }
   20% { transform: translate(-1px, -1px) rotate(-1deg); }
-  40% { transform: translate(-1px, 1px) rotate(1deg); }
+  40% { transform: translate(1px, 1px) rotate(1deg); }
   60% { transform: translate(1px, -1px) rotate(0deg); }
   80% { transform: translate(-1px, 1px) rotate(-1deg); }
   100% { transform: translate(1px, 1px) rotate(1deg); }
 }
 @keyframes tremble-bg {
-  0% { filter: brightness(1); } 50% { filter: brightness(1.1); } 100% { filter: brightness(1); }
+  0% { filter: brightness(1); } 50% { filter: brightness(1.2); } 100% { filter: brightness(1); }
 }
 
 /* ===================================================
-   ★これ以下のエリア：全体の天地を10%程度縮小・最適化
+   ★修正：天地を15%縮小したメイン対戦エリア
    =================================================== */
-/* メイン対戦エリア */
 .battle-arena {
   display: flex; flex: 1; gap: 6px; min-height: 0;
 }
 
-/* 左側：縦積みスコア（余白を詰めてコンパクトに） */
+/* 左側：直感的な縦積みスコア（高さをスリムに圧縮） */
 .sidebar-scores {
-  width: 74px; display: flex; flex-direction: column; justify-content: space-between;
+  width: 76px; display: flex; flex-direction: column; justify-content: space-between;
   background: var(--color-card); border-radius: 12px; border: 1px solid var(--color-border);
-  padding: 6px 2px; flex-shrink: 0;
+  padding: 8px 2px; flex-shrink: 0;
 }
 .side-score-box { text-align: center; width: 100%; }
-.side-score-box.opp { color: #ff6060; border-bottom: 1px dashed #333; padding-bottom: 4px; }
-.side-score-box.self { color: #5c9eff; border-top: 1px dashed #333; padding-top: 4px; }
+.side-score-box.opp { color: #ff6060; border-bottom: 1px dashed #333; padding-bottom: 8px; }
+.side-score-box.self { color: #5c9eff; border-top: 1px dashed #333; padding-top: 8px; }
 .side-label { font-size: 9px; color: var(--color-text-sub); font-weight: bold; line-height: 1.2; margin-bottom: 2px; }
-.side-num { font-size: 20px; font-weight: 900; }
+.side-num { font-size: 22px; font-weight: 900; }
 .side-num small { font-size: 9px; font-weight: normal; color: var(--color-text-sub); }
-.vs-sign { font-size: 9px; color: #444; font-weight: bold; text-align: center; margin: auto 0; }
+.vs-sign { font-size: 10px; color: #444; font-weight: bold; text-align: center; margin: auto 0; }
 
-/* 右側：網（高さを引き締め） */
+/* 右側：網（グラデーションによる鉄格子表現。高さを圧縮） */
 .grid-container {
   flex: 1; display: flex; flex-direction: column; min-height: 0;
 }
 .grid {
   flex: 1; display: grid; grid-template-rows: repeat(3, 1fr); grid-template-columns: repeat(5, 1fr);
-  gap: 4px; border-radius: 12px; padding: 4px;
+  gap: 5px; border-radius: 0 0 12px 12px; padding: 6px;
   background: 
     linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
     #18120c;
   background-size: 20% 33.3%, 20% 33.3%;
-  border: 3px solid #42301c;
+  border: 4px solid #42301c; border-top: none; /* おじさんエリアと合体 */
   box-shadow: inset 0 0 15px #000;
   touch-action: manipulation;
 }
@@ -126,25 +126,62 @@ body {
 @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(0.96); } }
 
 .cell-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; }
-.meat-icon { font-size: 24px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+.meat-icon { font-size: 32px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
 .meat-badge { 
-  font-size: 8px; font-weight: 900; padding: 1px 3px; border-radius: 3px; 
-  margin-top: 1px; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  font-size: 10px; font-weight: 900; padding: 1px 5px; border-radius: 4px; 
+  margin-top: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 .badge-raw    { background: #1a521a; color: #a0ffa0; border: 1px solid #2d7a2d; }
+/* ★修正：育った ➔ 焼けた */
 .badge-cooked { background: #663300; color: #ffb050; border: 1px solid #8c4600; }
+
+/* ===================================================
+   ★完全復活：大迫力のネオンカラーじゃんけんモーダル
+   =================================================== */
+.center-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); border-radius: 12px;
+  display: flex; justify-content: center; align-items: center;
+  z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+}
+.center-overlay.active { opacity: 1; pointer-events: auto; }
+
+.center-card {
+  background: #1e1e1e; border: 4px solid #444; border-radius: 24px;
+  padding: 20px; width: 85%; text-align: center; box-shadow: 0 10px 35px rgba(0,0,0,0.8);
+  transform: scale(0.8); transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.center-overlay.active .center-card { transform: scale(1); }
+
+/* ドカンと大きく表示するネオン判定テキスト */
+.jk-result-huge {
+  font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 5px; letter-spacing: 2px;
+}
+/* ★NEW: 勝敗に応じたネオンカラー演出（鮮やかなネオン） */
+.jk-res-win  { color: #40ff40; text-shadow: 0 0 15px rgba(64,255,64,0.7); }
+.jk-res-lose { color: #ff4040; text-shadow: 0 0 15px rgba(255,40,40,0.7); }
+.jk-res-draw { color: #ffff40; text-shadow: 0 0 15px rgba(255,255,64,0.7); }
+
+.jk-vs-detail { font-size: 18px; margin-bottom: 16px; color: #eee; background: #2a2a2a; padding: 6px 0; border-radius: 10px; }
+.jk-next-btn {
+  width: 100%; max-width: 140px; margin: 0 auto;
+  padding: 12px 0; border-radius: 10px; background: var(--color-accent);
+  color: #000; font-size: 16px; font-weight: bold; border: none; cursor: pointer;
+  box-shadow: 0 3px 0 #a67010;
+}
+.jk-next-btn:active { transform: translateY(2px); box-shadow: none; }
 
 /* 下部操作パネル（天地高さをスリムに制限） */
 .action-panel {
   background: var(--color-card); border: 1px solid var(--color-border);
   border-radius: 12px; padding: 6px 8px; flex-shrink: 0; min-height: 74px;
 }
-.action-title { font-size: 11px; color: var(--color-text-sub); text-align: center; margin-bottom: 4px; font-weight: bold; }
+.action-title { font-size: 11px; color: var(--color-text-sub); text-align: center; margin-bottom: 6px; font-weight: bold; }
 
 .janken-btns { display: flex; gap: 8px; justify-content: center; }
 .jbtn {
-  font-size: 24px; flex: 1; max-width: 80px; height: 42px;
-  border-radius: 10px; border: 2px solid #444; background: #2a2a2a; cursor: pointer;
+  font-size: 28px; flex: 1; max-width: 90px; height: 50px;
+  border-radius: 12px; border: 2px solid #444; background: #2a2a2a; cursor: pointer;
   display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 0 #111;
 }
 .jbtn:active { background: #444; transform: translateY(2px); box-shadow: none; }
@@ -161,67 +198,48 @@ body {
 .abtn-submit { background: var(--color-accent); color: #000; border: none; box-shadow: 0 3px 0 #a67010; }
 .abtn:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
 
-/* ログボックスの天地を薄く調整 */
+/* ログボックスの高さをスリムに調整 */
 .log-box {
   font-size: 12px; color: var(--color-text-sub); font-weight: bold;
-  min-height: 32px; height: 32px; text-align: center; padding: 0 10px;
-  background: var(--color-card); border-radius: 8px;
+  min-height: 36px; text-align: center; padding: 0 10px;
+  background: var(--color-card); border-radius: 10px;
   border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.npc-thinking { color: #ff6060; }
-
-/* じゃんけん結果用・中央モーダル */
-.modal-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.65); backdrop-filter: blur(2px); border-radius: 12px;
-  display: flex; justify-content: center; align-items: center; z-index: 100;
-  opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
-}
-.modal-overlay.active { opacity: 1; pointer-events: auto; }
-.modal-card {
-  background: #222222; border: 3px solid var(--color-accent); border-radius: 16px;
-  padding: 16px; width: 85%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-  transform: scale(0.85); transition: transform 0.2s ease;
-}
-.modal-overlay.active .modal-card { transform: scale(1); }
-.modal-res-icon { font-size: 44px; margin-bottom: 4px; }
-.modal-res-title { font-size: 18px; font-weight: bold; margin-bottom: 8px; }
-.modal-res-body { font-size: 13px; color: var(--color-text-sub); margin-bottom: 12px; }
+.npc-thinking { color: #ff6060; font-size: 11px; }
 
 /* タイトル・ゲームオーバー画面 */
 .title-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center; padding: 20px; }
-.title-logo { font-size: 44px; font-weight: 900; color: #ff3333; text-shadow: 3px 3px 0px #000, 0 0 20px rgba(232,160,32,0.6); margin-bottom: 6px; letter-spacing: 4px; animation: glow 1.5s ease-in-out infinite alternate; }
-.title-sub { font-size: 12px; color: var(--color-text-sub); margin-bottom: 30px; font-weight: bold; }
-.title-btns { display: flex; flex-direction: column; gap: 12px; width: 80%; max-width: 220px; }
-.title-btn { padding: 12px 0; border-radius: 12px; border: 2px solid #444; background: #222; color: #fff; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #111; }
+.title-logo { font-size: 48px; font-weight: 900; color: #ff3333; text-shadow: 3px 3px 0px #000, 0 0 20px rgba(232,160,32,0.6); margin-bottom: 6px; letter-spacing: 4px; animation: glow 1.5s ease-in-out infinite alternate; }
+.title-sub { font-size: 13px; color: var(--color-text-sub); margin-bottom: 40px; font-weight: bold; }
+.title-btns { display: flex; flex-direction: column; gap: 14px; width: 80%; max-width: 240px; }
+.title-btn { padding: 14px 0; border-radius: 12px; border: 2px solid #444; background: #222; color: #fff; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #111; }
 .title-btn:active { transform: translateY(2px); box-shadow: none; }
-.title-btn.main-btn { background: var(--color-accent); color: #000; border: none; font-size: 16px; box-shadow: 0 4px 0 #a67010; }
+.title-btn.main-btn { background: var(--color-accent); color: #000; border: none; font-size: 17px; box-shadow: 0 4px 0 #a67010; }
 @keyframes glow { from { text-shadow: 0 0 10px rgba(255,50,50,0.5), 3px 3px 0px #000; } to { text-shadow: 0 0 25px rgba(232,160,32,0.9), 3px 3px 0px #000; } }
 
-.gameover-wrap { text-align: center; padding: 16px 10px; height: 100%; width: 100%; background: var(--color-card); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-.result-icon { font-size: 48px; margin-bottom: 6px; }
-.result-title { font-size: 20px; font-weight: bold; margin-bottom: 4px; }
-.result-sub { font-size: 12px; color: var(--color-text-sub); margin-bottom: 16px; padding: 0 10px; }
-.result-scores { display: flex; gap: 10px; justify-content: center; margin-bottom: 16px; width: 100%; }
-.rscore-card { padding: 8px; border-radius: 8px; border: 1px solid var(--color-border); background: #252525; flex: 1; }
+.gameover-wrap { text-align: center; padding: 20px 10px; height: 100%; width: 100%; background: var(--color-card); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.result-icon { font-size: 54px; margin-bottom: 8px; }
+.result-title { font-size: 22px; font-weight: bold; margin-bottom: 4px; }
+.result-sub { font-size: 12px; color: var(--color-text-sub); margin-bottom: 20px; padding: 0 10px; }
+.result-scores { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; width: 100%; }
+.rscore-card { padding: 10px; border-radius: 8px; border: 1px solid var(--color-border); background: #252525; flex: 1; }
 .rscore-card.loser { border: 2px solid #ff6060; background: #331515; }
 .rscore-label { font-size: 10px; color: var(--color-text-sub); margin-bottom: 2px; }
-.rscore-num { font-size: 18px; font-weight: bold; }
-.restart-btn { width: 100%; max-width: 160px; padding: 10px 0; border-radius: 10px; background: var(--color-accent); border: none; font-size: 14px; font-weight: bold; color: #000; cursor: pointer; }
-.help-text { font-size: 11px; text-align: left; color: #ccc; line-height: 1.4; max-height: 180px; overflow-y: auto; margin-bottom: 14px; padding: 8px; background: #151515; border-radius: 8px; }
+.rscore-num { font-size: 20px; font-weight: bold; }
+.restart-btn { width: 100%; max-width: 180px; padding: 12px 0; border-radius: 10px; background: var(--color-accent); border: none; font-size: 15px; font-weight: bold; color: #000; cursor: pointer; }
+.help-text { font-size: 12px; text-align: left; color: #ccc; line-height: 1.5; max-height: 200px; overflow-y: auto; margin-bottom: 20px; padding: 8px; background: #151515; border-radius: 8px; }
 </style>
 </head>
 <body>
 
 <div id="app"></div>
 
-<div id="janken-modal" class="modal-overlay">
-  <div class="modal-card">
-    <div id="modal-icon" class="modal-res-icon">🎉</div>
-    <div id="modal-title" class="modal-res-title">じゃんけん勝利！</div>
-    <div id="modal-body" class="modal-res-body">✊ vs ✌️</div>
-    <button class="abtn abtn-submit" style="width:100%; max-width:120px; margin:8px auto 0;" onclick="closeModal()">進む</button>
+<div id="janken-modal" class="center-overlay">
+  <div class="center-card">
+    <div id="modal-title" class="jk-result-huge Win">勝利！</div>
+    <div id="modal-body" class="jk-vs-detail">✊ vs ✌️</div>
+    <button class="jk-next-btn" onclick="closeModal()">トングを構える ➔</button>
   </div>
 </div>
 
@@ -243,14 +261,16 @@ function initGame() {
     phase: 'setup',  
     currentPlayer: PLAYER, actionDone: false, selectedAction: null,
     scores: [0, 0], gameOver: false, log: 'いざ、限界焼肉勝負！',
-    cells: cells, turn: 1, npcThinking: false
+    cells: cells, turn: 1, npcThinking: false,
+    // じゃんけん結果表示用の一時記憶
+    lastJanken: { result: '', vsEmoji: '', vsText: '', classStr: '' }
   };
 }
 initGame();
 
 function startMeatSetupAnimation() {
   G.phase = 'setup';
-  G.log = '店員が新鮮なお肉を運んできた…！';
+  G.log = '新鮮なお肉が網に並べられています…';
   render();
   var midRowCols = [0, 1, 2, 3, 4];
   var delay = 180;
@@ -291,7 +311,7 @@ function remainingMeat() { return G.cells.filter(function(c) { return c.meat !==
 function doAction(action, cell, player) {
   var msg = '';
   if (action === 'bake') {
-    cell.meat.status = 'cooked'; msg = '網の上の肉が育った！🔥';
+    cell.meat.status = 'cooked'; msg = '網の上の肉が焼けた！🔥';
   } else if (action === 'move') {
     var dir = (player === PLAYER) ? -1 : 1;
     var nr = cell.r + dir;
@@ -299,10 +319,10 @@ function doAction(action, cell, player) {
     cell.meat = null;
     if (nr < 0 || nr > 2) {
       G.scores[player]++;
-      msg = (player === PLAYER) ? '🍖 おじさんの皿に押し込んだ！' : '😱 自分の皿に滑り込んできた…！';
+      msg = (player === PLAYER) ? '🍖 おじさんの皿に押し込んだ！' : '😱 あなたの皿に滑り込んできた…！';
       if (remainingMeat() === 0) { G.gameOver = true; G.screen = 'gameover'; }
     } else {
-      getCell(nr, cell.c).meat = meatCopy; msg = '肉の位置をスライドさせた！';
+      getCell(nr, cell.c).meat = meatCopy; msg = '肉を1マス押し出した！';
     }
   }
   return msg;
@@ -326,31 +346,46 @@ function npcAct() {
   render();
 }
 
+// じゃんけん処理：中央デカ文字ネオンモーダル用にフェーズを切り替える
 window.playJanken = function(choice) {
   if (G.phase !== 'janken' || G.npcThinking) return;
   var npc = Math.floor(Math.random() * 3); var res = jkResult(choice, npc);
   var ems = ['✊','✌️','✋'];
   
+  // ネオンモーダル表示用の情報を一時記憶
+  G.lastJanken = { detailText: ems[choice] + ' vs ' + ems[npc] };
+
   if (res === 'draw') {
-    showJankenModal('🤝', 'あいこ！', ems[choice] + ' vs ' + ems[npc], true);
-    return;
-  }
-  
-  if (res === 'win') {
+    G.lastJanken.result = 'あいこ！'; G.lastJanken.classStr = 'jk-res-draw';
+    G.log = 'あいこ！もう一本！';
+    showModal(true);
+  } else if (res === 'win') {
     G.currentPlayer = PLAYER; G.phase = 'action';
-    showJankenModal('🎉', 'じゃんけん勝利！', 'あなた: ' + ems[choice] + ' / おじさん: ' + ems[npc] + '<br><br>あなたの行動ターンです。', false);
+    G.lastJanken.result = '勝利！'; G.lastJanken.classStr = 'jk-res-win';
+    G.log = 'じゃんけん勝利！あなたのターン。';
+    showModal(false);
   } else {
     G.currentPlayer = NPC; G.phase = 'action'; G.npcThinking = true;
-    showJankenModal('😰', 'じゃんけん敗北…', 'あなた: ' + ems[choice] + ' / おじさん: ' + ems[npc] + '<br><br>おじさんの一手を見守りましょう。', false);
+    G.lastJanken.result = '敗北…'; G.lastJanken.classStr = 'jk-res-lose';
+    G.log = 'じゃんけん敗北…おじさんの番です。';
+    showModal(false);
   }
 };
 
-function showJankenModal(icon, title, body, isDraw) {
-  document.getElementById('modal-icon').innerHTML = icon;
-  document.getElementById('modal-title').innerHTML = title;
-  document.getElementById('modal-body').innerHTML = body;
-  var modal = document.getElementById('janken-modal');
-  modal.classList.add('active');
+// じゃんけんネオンモーダルを表示
+function showModal(isDraw) {
+  document.getElementById('modal-title').innerHTML = G.lastJanken.result;
+  document.getElementById('modal-title').className = 'jk-result-huge ' + G.lastJanken.classStr;
+  document.getElementById('modal-body').innerHTML = G.lastJanken.detailText;
+  
+  // 次へ進むボタンを「あいこ」の時は非表示にする
+  var nextBtn = document.querySelector('.jk-next-btn');
+  nextBtn.style.display = isDraw ? 'none' : 'block';
+  nextBtn.innerHTML = G.currentPlayer === PLAYER ? 'トングを構える ➔' : 'おじさんの番を見届ける ➔';
+
+  document.getElementById('janken-modal').classList.add('active');
+  
+  // あいこの場合は1.1秒後に自動で閉じて再戦
   if (isDraw) {
     setTimeout(function() { closeModal(); }, 1100);
   }
@@ -359,8 +394,8 @@ function showJankenModal(icon, title, body, isDraw) {
 window.closeModal = function() {
   document.getElementById('janken-modal').classList.remove('active');
   if (G.currentPlayer === NPC && G.phase === 'action') {
-    G.log = 'おじさんがトングをギラつかせている…'; render();
-    setTimeout(npcAct, 900);
+    G.log = 'おじさんが脂汗を流しながら長考している…'; render();
+    setTimeout(npcAct, 1000);
   } else {
     render();
   }
@@ -394,7 +429,7 @@ function render() {
 
   if (G.screen === 'title') {
     if (G.phase === 'help') {
-      app.innerHTML = '<div class="gameover-wrap"><div class="result-title" style="color:var(--color-accent)">限界焼肉のルール</div><div class="help-text"><b>【どんなゲーム？】</b><br>じゃんけんに勝ってアクションを起こし、中央の網の上にある肉を相手の皿に押し付け合う限界突破の満腹バトルゲームです！<br><br><b>【勝利条件】</b><br>網の上の肉がすべてなくなった時、<b>食べた枚数が「少ない」ほうの勝ち</b>です（相手に多く食わせたら勝ち）。<br><br><b>【ゲームの流れ】</b><br>1. 画面下部でじゃんけんをします。<br>2. 勝った側がアクション（肉を育てる/進める）を選択します。<br>3. <b>「肉をひっくり返す（焼く）」</b>：生の肉(🥩)を焼き肉(🍖)へ進化させます。動かすにはまず焼く必要があります。<br>4. <b>「肉を前に進める」</b>：焼けた肉(🍖)を相手側へ1マス押し出します。一番奥まで押し込むと相手が強制的に完食（得点）！<br>5. 網の上の肉がすべて消えるまでターンを繰り返します。</div><button class="title-btn" style="width:80%" onclick="closeHelp()">タイトルへ戻る</button></div>';
+      app.innerHTML = '<div class="gameover-wrap"><div class="result-title" style="color:var(--color-accent)">限界焼肉のルール</div><div class="help-text"><b>【どんなゲーム？】</b><br>じゃんけんに勝ってアクションを起こし、中央の網の上にある肉を相手の皿に押し付け合う満腹バトルゲームです！<br><br><b>【勝利条件】</b><br>網の上の肉がすべてなくなった時、<b>食べた枚数が「少ない」ほうの勝ち</b>です。<br><br><b>【ゲームの流れ】</b><br>1. 画面下部でじゃんけんをします。<br>2. 勝った側がアクション（肉を焼く/進める）を選択します。<br>3. <b>「肉をひっくり返す（焼く）」</b>：生の肉(🥩)を焼き肉(🍖)へ進化させます。<br>4. <b>「肉を前に進める」</b>：焼けた肉(🍖)を相手側へ1マス押し出します。一番奥まで押し込むと相手が強制完食！</div><button class="title-btn" style="width:80%" onclick="closeHelp()">タイトルへ戻る</button></div>';
     } else {
       app.innerHTML = '<div class="title-screen"><div class="title-logo">限界焼肉</div><div class="title-sub">〜 奢りを賭けたトング捌き 〜</div><div class="title-btns"><button class="title-btn main-btn" onclick="clickStartGame()">ゲーム開始</button><button class="title-btn" onclick="showHelp()">遊び方</button></div></div>';
     }
@@ -424,7 +459,8 @@ function render() {
     var inner = '';
     if (cell.meat) {
       var meatContent = cell.meat.status === 'raw' ? '🥩' : '🍖';
-      var badge = cell.meat.status === 'raw' ? '<span class="meat-badge badge-raw">生肉</span>' : '<span class="meat-badge badge-cooked">育った</span>';
+      // ★修正：育った ➔ 焼けた
+      var badge = cell.meat.status === 'raw' ? '<span class="meat-badge badge-raw">生肉</span>' : '<span class="meat-badge badge-cooked">焼けた</span>';
       inner = '<div class="cell-inner"><div class="meat-icon">' + meatContent + '</div>' + badge + '</div>';
     }
     var cls = 'cell ' + zc + (isSel ? ' selectable' : '');
@@ -437,7 +473,7 @@ function render() {
 
   var actionHTML = '';
   if (G.npcThinking) {
-    actionHTML = '<div class="action-title npc-thinking">👴 おじさんが脂汗を流しながら長考している…</div>';
+    actionHTML = '<div class="action-title npc-thinking">👴 おじさんがトングをギラつかせている…</div>';
   } else if (G.phase === 'janken') {
     actionHTML = '<div class="action-title">出す手を選べ！ (ターン ' + G.turn + ')</div><div class="janken-btns">' + JK.map(function(j,i){ return '<button class="jbtn" onclick="playJanken(' + i + ')">' + j + '</button>'; }).join('') + '</div>';
   } else if (G.phase === 'action' && G.currentPlayer === PLAYER) {
@@ -468,7 +504,7 @@ function renderGameOver(app) {
   var playerWon = myEaten < npcEaten; var draw = myEaten === npcEaten;
   var icon = draw ? '🤝' : (playerWon ? '🎉' : '🤮');
   var title = draw ? '割り勘（引き分け）' : (playerWon ? '大勝利！大人の意地！' : '敗北…お腹が限界突破');
-  var sub = draw ? '二人とも胃袋が等しく爆発。' : (playerWon ? 'おじさんにトドメのカルビを叩き込んだ！今日は奢りだ！' : '最後の一枚が喉を通らない…おじさんの不敵な笑みが…');
+  var sub = draw ? '二人とも胃袋が等しく爆発。' : (playerWon ? 'おじさんの胃袋にトドメのカルビを叩き込んだ！今日は奢りだ！' : '最後の一枚が喉を通らない…おじさんの不敵な笑みが視界で滲む…');
   app.innerHTML = '<div class="gameover-wrap"><div class="result-icon">' + icon + '</div><div class="result-title">' + title + '</div><div class="result-sub">' + sub + '</div><div class="result-scores"><div class="rscore-card' + (!playerWon&&!draw?' loser':'') + '"><div class="rscore-label">あなたの完食</div><div class="rscore-num">' + myEaten + ' 枚</div></div><div class="rscore-card' + (playerWon?' loser':'') + '"><div class="rscore-label">おじさんの完食</div><div class="rscore-num">' + npcEaten + ' 枚</div></div></div><button class="restart-btn" onclick="restart()">再戦する</button></div>';
 }
 
